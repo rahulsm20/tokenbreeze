@@ -6,6 +6,8 @@ import {
   DEX_AGGREGATOR_SPECIFIC,
 } from "../../src/graphql/queries";
 import { schema } from "../../src/graphql/typedefs";
+import dotenv from "dotenv";
+dotenv.config();
 
 describe("listing test", () => {
   it("should return listings accurately", async () => {

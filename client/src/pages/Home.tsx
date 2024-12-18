@@ -15,8 +15,7 @@ const Home = () => {
   const { loading: loadingData, data: dexData } = useQuery(DEX_AGGREGATOR);
   const tooltipData = (
     <div className="text-wrap w-40 p-2">
-      The prices are aggregated from various sources including CoinGecko,
-      CoinMarketCap, and Polygon.io
+      The prices are aggregated from CoinGecko and CoinMarketCap.
     </div>
   );
   return (
