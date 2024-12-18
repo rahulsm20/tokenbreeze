@@ -1,7 +1,0 @@
-Error: docker compose up --wait command failed!
-Docker engine: Docker version 27.2.0, build 3ab4256
-Docker compose: 2.29.2
-Distribution: Windows Version: Microsoft Windows [Version 10.0.19045.5131] (c) Microsoft Corporation. All rights reserved. D:\projects\web3\tokentide\elastic-start-local>
--- Logs of service es-local-dev:
--- Logs of service kibana-local-dev:
--- Logs of service kibana_settings:

@@ -7,10 +7,10 @@
     "dev": "ts-node-dev src/server.ts",
     "build": "tsc && npx prisma generate --schema=./src/prisma/schema.prisma",
     "start": "node dist/src/server.js",
-    "test:unit": "mocha --exit --timeout 10000 --require ts-node/register test/unit/*.test.ts",
+    "test:unit": "dotenv -e .env mocha --exit --timeout 10000 --require ts-node/register test/unit/*.test.ts",
     "test:load": "k6 run test/load/index.ts",
     "test": "npm run test:unit && npm run test:load",
-    "coverage": "nyc npm run test",
+    "coverage": "nyc npm run test:unit",
     "migrate": "npx prisma migrate dev",
     "deploy": "npx prisma migrate deploy && npx prisma generate"
   },
