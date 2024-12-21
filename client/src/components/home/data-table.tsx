@@ -40,15 +40,6 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -104,19 +95,6 @@ export function DataTable<TData, TValue>({
           }}
           className="max-w-sm"
         />
-        <Select defaultValue="usd">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a currency" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Currency</SelectLabel>
-              <SelectItem value="usd">USD</SelectItem>
-              <SelectItem value="eur">EUR</SelectItem>
-              <SelectItem value="inr">INR</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
       <div className="rounded-md border text-xs ">
         <Table className="overflow-x-scroll">

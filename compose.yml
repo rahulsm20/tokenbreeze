@@ -2,14 +2,14 @@ version: "3"
 
 services:
   client:
-    image: tokentide-client
+    image: tokenbreeze-client
     build:
       context: ./client
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
   server:
-    image: tokentide-server
+    image: tokenbreeze-server
     build:
       context: ./server
       dockerfile: Dockerfile

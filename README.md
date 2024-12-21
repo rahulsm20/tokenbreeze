@@ -1,4 +1,4 @@
-<h1 style="display:flex; flex-direction:row; gap:1rem; align-items:center; justify-items:center;"> TokenTide <img src="./client/public/waves.svg"/></h1>
+<h1 style="display:flex; flex-direction:row; gap:1rem; align-items:center; justify-items:center;"> TokenBreeze <img src="./client/public/waves.svg"/></h1>
 Just another token price aggregator.
 
 ### Index
@@ -24,7 +24,7 @@ Just another token price aggregator.
 
 ### Architecture
 
-![architecture](./client/public/dark-tokentide.png)
+![architecture](./client/public/tokenbreeze.png)
 
 ### Setup Locally
 

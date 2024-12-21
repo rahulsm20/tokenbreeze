@@ -4,7 +4,7 @@ const Footer = () => {
   const socials = [
     {
       name: "Github",
-      url: "https://github.com/rahulsm20/tokentide",
+      url: "https://github.com/rahulsm20/tokenbreeze",
     },
     {
       name: "Twitter",
@@ -16,7 +16,7 @@ const Footer = () => {
     <footer className="border-t p-5 mt-10 gap-3 flex justify-around items-start bottom-0">
       <div className="flex flex-col gap-2">
         <p className="text-lg text-start flex gap-2">
-          <Waves /> TokenTide
+          <Waves /> TokenBreeze
         </p>
         <span className="text-sm text-zinc-500">
           Just another token price aggregator.
@@ -38,7 +38,7 @@ const Footer = () => {
             ))}
           </ul>
         </div>
-        <p className="flex gap-2 text-zinc-500 text-xs">© 2024 TokenTide</p>
+        <p className="flex gap-2 text-zinc-500 text-xs">© 2024 TokenBreeze</p>
       </div>
     </footer>
   );

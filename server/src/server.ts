@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", async (_req: Request, res: Response) => {
   return res
     .status(200)
-    .json({ message: "DEXter service running", status: "ok" });
+    .json({ message: "tokenbreeze service running", status: "ok" });
 });
 
 const startServer = async () => {

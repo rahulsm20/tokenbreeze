@@ -7,12 +7,12 @@ const Navbar = () => {
         <li>
           <a href="/" className="flex gap-1">
             <Waves className="h-6 w-6" />
-            <span>TokenTide</span>
+            <span>TokenBreeze</span>
           </a>
         </li>
         <li>
           <a
-            href="https://github.com/rahulsm20/tokentide/blob/main/README.md"
+            href="https://github.com/rahulsm20/tokenbreeze/blob/main/README.md"
             target="_blank"
             className="flex gap-1 hover:underline"
           >
@@ -22,7 +22,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href="https://github.com/rahulsm20/tokentide"
+            href="https://github.com/rahulsm20/tokenbreeze"
             target="_blank"
             className="flex items-center gap-1 hover:underline"
           >
