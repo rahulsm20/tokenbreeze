@@ -12,7 +12,6 @@ dotenv.config();
 describe("listing test", () => {
   it("should return listings accurately", async () => {
     const query = DEX_AGGREGATOR;
-    console.log({ redisUrl: process.env.REDIS_URL });
     const result = await graphql({
       schema,
       source: query,

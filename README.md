@@ -3,9 +3,9 @@ Just another token price aggregator.
 
 ### Index
 
-- [Tech Stack](#architecture)
+- [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
-- [Setup locally](#architecture)
+- [Setup locally](#setup-locally)
 
 ### Tech Stack
 
@@ -24,7 +24,7 @@ Just another token price aggregator.
 
 ### Architecture
 
-![architecture](./client/public/tokenbreeze.png)
+![architecture](./client/public/tokenbreeze.PNG)
 
 ### Setup Locally
 
