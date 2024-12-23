@@ -16,7 +16,14 @@ jobs:
     strategy:
       matrix:
         node-version: [21.x]
-
+    env:
+      REDIS_URL: ${{secrets.REDIS_URL}}
+      DATABASE_URL: ${{secrets.DATABASE_URL}}
+      DIRECT_URL: ${{secrets.DIRECT_URL}}
+      COIN_MARKET_CAP_API_KEY: ${{secrets.COIN_MARKET_CAP_API_KEY}}
+      COINGECKO_API_KEY: ${{secrets.COINGECKO_API_KEY}}
+      COINGECKO_ROOT_URL: ${{secrets.COINGECKO_ROOT_URL}}
+      NODE_ENV: ${{secrets.NODE_ENV}}
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -30,16 +37,6 @@ jobs:
         run: |
           cd server
           npm install
-
-      # - name: Load Environment Variables
-      #   run: |
-      #     cd server
-      #     if [ -f ".env" ]; then
-      #       echo "Loading environment variables..."
-      #       cat .env >> $GITHUB_ENV
-      #     else
-      #       echo ".env file not found in server directory."
-      #     fi
 
       - name: Run tests
         run: |
