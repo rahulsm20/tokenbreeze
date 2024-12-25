@@ -6,7 +6,7 @@ const PriceChangeBadge = ({
   percentageChange: number;
 }) => {
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex gap-1 items-center text-xs sm:text-base">
       {percentageChange > 0 ? (
         <>
           <ChevronUp className="text-green-500" />

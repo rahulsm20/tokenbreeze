@@ -1,6 +1,3 @@
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-
 import {
   GraphQLList,
   GraphQLObjectType,
@@ -14,29 +11,7 @@ import {
   dexAggregatorSpecific,
 } from "../controllers/aggregator";
 
-// your data.
 export const typeDefs = `#graphql
-  
-  type HistoryLog {
-    id: ID
-    symbol: String
-    value: Float
-    date: String
-    createdAt: String
-    updatedAt: String
-    }
-
-  type Value {
-    value: Float
-    date: String
-  }
-
-  type CryptoResponse {
-    ticker: String
-    provider: String
-    results: [Value]
-  }
-
   scalar JSON
 
   enum DateRange {
@@ -47,7 +22,6 @@ export const typeDefs = `#graphql
   }
 
   type Query {
-    dexListings (ticker: String): [CryptoResponse]
     dexAggregator: JSON!
     dexAggregatorSpecific (symbol: String!, dateRange: DateRange): JSON!
   }
@@ -61,16 +35,14 @@ export const typeDefs = `#graphql
 
 const GraphQLJSON = new GraphQLScalarType({
   name: "JSON",
-  description: "Arbitrary JSON data",
+  description: "JSON data",
   serialize(value) {
-    return value; // The value is already JSON
+    return value;
   },
   parseValue(value) {
     return value;
   },
   parseLiteral(ast) {
-    // This method is used for parsing literal values in GraphQL queries
-    // For JSON, this can be complex to fully implement
     switch (ast.kind) {
       case Kind.STRING:
       case Kind.BOOLEAN:
@@ -78,7 +50,6 @@ const GraphQLJSON = new GraphQLScalarType({
       case Kind.FLOAT:
         return ast.value;
       case Kind.OBJECT:
-        // Parse object literals if needed
         return ast;
       default:
         return null;

@@ -63,12 +63,14 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
     id: "info.name",
     header: "Token",
     cell: (info) => (
-      <div className="flex items-center">
+      <div className="flex items-center text-xs sm:text-base">
         {info.cell.row.original.info.image && (
           <img src={info.cell.row.original.info.image} className="h-4 w-4" />
         )}
-        <span className="flex p-2">{info.cell.row.original.info.name}</span>
-        <span className="text-foreground/80">
+        <span className="flex p-2 text-xs sm:text-base">
+          {info.cell.row.original.info.name}
+        </span>
+        <span className="text-foreground/80 text-xs sm:text-base">
           {info.cell.row.original.info.symbol}
         </span>
       </div>
@@ -77,17 +79,12 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
   {
     accessorKey: "price",
     header: "Price",
-    cell: (info) => formatCurrency(info.cell.row.original.info.current_price),
+    cell: (info) => (
+      <div className="text-xs sm:text-base">
+        {formatCurrency(info.cell.row.original.info.current_price)}
+      </div>
+    ),
   },
-  // {
-  //   accessorKey: "percent_change_1h",
-  //   header: "1h Change",
-  //   cell: (info) => (
-  //     <PriceChangeBadge
-  //       percentageChange={info.cell.row.original.info.price_change_1h}
-  //     />
-  //   ),
-  // },
   {
     accessorKey: "percent_change_24h",
     header: "24h Change",
@@ -99,13 +96,4 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
       />
     ),
   },
-  // {
-  //   accessorKey: "percent_change_7d",
-  //   header: "7d Change",
-  //   cell: (info) => (
-  //     <PriceChangeBadge
-  //       percentageChange={info.cell.row.original.info.price_change_7d}
-  //     />
-  //   ),
-  // },
 ];

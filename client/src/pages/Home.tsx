@@ -21,7 +21,7 @@ const Home = () => {
   return (
     <Layout>
       <div className="p-10 flex flex-col gap-5">
-        <h1 className="flex text-2xl items-center gap-2">
+        <h1 className="flex text-lg sm:text-2xl items-center gap-2">
           <span>Aggregated Cryptocurrency Prices</span>
           <TooltipProvider>
             <Tooltip>

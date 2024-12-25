@@ -2,10 +2,8 @@ import {
   dexAggregator,
   dexAggregatorSpecific,
 } from "../controllers/aggregator";
-import { dexListings } from "../controllers/dex-listings";
 
 export const queries = {
-  dexListings,
   dexAggregator,
   dexAggregatorSpecific,
 };
