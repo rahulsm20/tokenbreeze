@@ -1,15 +1,4 @@
-import {
-  GraphQLList,
-  GraphQLObjectType,
-  GraphQLScalarType,
-  GraphQLSchema,
-  GraphQLString,
-  Kind,
-} from "graphql";
-import {
-  dexAggregator,
-  dexAggregatorSpecific,
-} from "../controllers/aggregator";
+import { GraphQLObjectType, GraphQLSchema } from "graphql";
 
 export const typeDefs = `#graphql
   scalar JSON
@@ -20,61 +9,73 @@ export const typeDefs = `#graphql
     twenty_four_hours,
     thirty_days
   }
-
+  
   type Query {
-    dexAggregator: JSON!
-    dexAggregatorSpecific (symbol: String!, dateRange: DateRange): JSON!
+    dexAggregator: [TokenInfo]
+    dexAggregatorSpecific (symbol: String!, dateRange: DateRange):[TokenResponse]
   }
 
   type TokenResponse {
-    message: String
-    token: String
+      date: Float
+      price: Float
   }
 
+  type TokenInfo {
+    info: TokenDetails
+    providers: [String]
+    results: [TokenResult]
+  }
+
+  type TokenResult {
+    price: Float
+    provider: String
+    price_change_percentage_24h: Float
+    percent_change_7d: Float
+    percent_change_1h: Float
+    percent_change_24h: Float
+  }
+  type Quote{
+    USD: QuoteDetails
+  }
+  type QuoteDetails{
+    price: Float
+    percent_change_1h: Float
+    percent_change_7d: Float
+    percent_change_24h: Float
+    percent_change_30d: Float
+    percent_change_60d: Float
+    percent_change_90d: Float
+  }
+  type TokenDetails{
+      id: String
+      name: String
+      symbol: String
+      price_change_percentage_24h: Float
+      current_price: Float
+      image: String
+      price_change_24h: Float
+      quote: Quote
+    }
 `;
 
-const GraphQLJSON = new GraphQLScalarType({
-  name: "JSON",
-  description: "JSON data",
-  serialize(value) {
-    return value;
-  },
-  parseValue(value) {
-    return value;
-  },
-  parseLiteral(ast) {
-    switch (ast.kind) {
-      case Kind.STRING:
-      case Kind.BOOLEAN:
-      case Kind.INT:
-      case Kind.FLOAT:
-        return ast.value;
-      case Kind.OBJECT:
-        return ast;
-      default:
-        return null;
-    }
-  },
-});
-
-export const schema = new GraphQLSchema({
-  description: "A schema for querying crypto data",
-  assumeValid: true,
-  query: new GraphQLObjectType({
-    name: "Query",
-    fields: {
-      dexAggregator: {
-        type: GraphQLJSON,
-        resolve: dexAggregator,
-      },
-      dexAggregatorSpecific: {
-        type: GraphQLJSON,
-        resolve: dexAggregatorSpecific,
-        args: {
-          symbol: { type: GraphQLString },
-          dateRange: { type: new GraphQLList(GraphQLString) },
-        },
-      },
-    },
-  }),
-});
+// export const schema = new GraphQLSchema({
+//   description: "A schema for querying crypto data",
+//   assumeValid: true,
+//   query: new GraphQLObjectType({
+//     name: "Query",
+//     fields: {
+//       dexAggregator: {
+//         type: GraphQLJSON,
+//         resolve: dexAggregator,
+//       },
+//       dexAggregatorSpecific: {
+//         type: GraphQLJSON,
+//         resolve: dexAggregatorSpecific,
+//         args: {
+//           symbol: { type: GraphQLString },
+//           dateRange: { type: new GraphQLList(GraphQLString) },
+//         },
+//       },
+//     },
+//   }),
+// });

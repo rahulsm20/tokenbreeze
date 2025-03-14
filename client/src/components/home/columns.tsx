@@ -77,11 +77,26 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
     ),
   },
   {
-    accessorKey: "price",
-    header: "Price",
+    accessorKey: "cmc",
+    header: "CoinMarketCap",
     cell: (info) => (
       <div className="text-xs sm:text-base">
-        {formatCurrency(info.cell.row.original.info.current_price)}
+        {formatCurrency(
+          info.cell.row.original.info.current_price ||
+            info.cell.row.original.results?.[0].price
+        )}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "cg",
+    header: "CoinGecko",
+    cell: (info) => (
+      <div className="text-xs sm:text-base">
+        {formatCurrency(
+          info.cell.row.original.info.current_price ||
+            info.cell.row.original.results?.[0].price
+        )}
       </div>
     ),
   },
@@ -91,7 +106,8 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
     cell: (info) => (
       <PriceChangeBadge
         percentageChange={
-          info.cell.row.original.info.price_change_percentage_24h
+          info.cell.row.original.info.price_change_percentage_24h ||
+          info.cell.row.original.results?.[0]?.percent_change_24h
         }
       />
     ),

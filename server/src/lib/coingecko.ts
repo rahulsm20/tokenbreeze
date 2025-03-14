@@ -65,7 +65,22 @@ class CoingeckoInstance {
       await cacheData(cacheKey, JSON.stringify(data));
       return data;
     } catch (err) {
-      console.log(err);
+      return err;
+    }
+  }
+  async getCoinData(symbol: string) {
+    try {
+      const url = `${this.base_url}/v3/coins/${symbol}`;
+      const cacheKey = `cg:coin:${symbol}:${dayjs().format("YYYY-MM-DD")}`;
+      const cachedData = await retrieveCachedData(cacheKey);
+      if (cachedData) {
+        return JSON.parse(cachedData);
+      }
+      const response = await this.api.get(url);
+      const data = await response.data;
+      await cacheData(cacheKey, JSON.stringify(data));
+      return data;
+    } catch (err) {
       return err;
     }
   }

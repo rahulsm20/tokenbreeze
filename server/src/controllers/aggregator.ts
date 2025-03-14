@@ -1,3 +1,4 @@
+import { getQuoteFromUniswap } from "../lib/uniswap";
 import { CMCResultType, DateRange } from "../../types";
 import { cmcClient } from "../lib/cmc";
 import { coingeckoClient } from "../lib/coingecko";
@@ -23,7 +24,7 @@ export const dexAggregatorSpecific = async (
     }
     return res;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return err;
   }
 };
@@ -76,14 +77,23 @@ export const dexAggregator = async (
         providers: [...(existing?.providers || []), PROVIDERS.COINGECKO],
       });
     }
-    // polygon.io
 
-    // const polygonData = await polygonInstance.getLatestListings();
-    // const { result: polygonResult } = polygonData;
-    // console.log({ polygonData });
-    // binance
-
-    return Array.from(result.values());
+    const res = Array.from(result.values());
+    // for (const r of res) {
+    //   const address = r.info?.platform?.token_address;
+    //   const id = r.info?.id;
+    //   if (address) {
+    //     const quote = await getQuoteFromUniswap({ id, address });
+    //     if (quote) {
+    //       r.results.push({
+    //         provider: PROVIDERS.UNISWAP,
+    //         price: quote,
+    //       });
+    //       r.providers.push(PROVIDERS.UNISWAP);
+    //     }
+    //   }
+    // }
+    return res;
   } catch (err) {
     console.log(err);
     return { err };

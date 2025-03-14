@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { Theme as ConnectTheme } from "node_modules/connectkit/build/types";
 
 type Theme = "dark" | "light" | "system";
 
@@ -11,11 +12,13 @@ type ThemeProviderProps = {
 type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  connectTheme: ConnectTheme;
 };
 
 const initialState: ThemeProviderState = {
   theme: "system",
   setTheme: () => null,
+  connectTheme: "midnight",
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
@@ -29,6 +32,18 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
+
+  const [connectTheme, setConnectTheme] = useState<ConnectTheme>("midnight");
+
+  useEffect(() => {
+    if (theme == "system") {
+      setConnectTheme(
+        (localStorage.getItem("vite-ui-theme") as ConnectTheme) || "light"
+      );
+    } else {
+      setConnectTheme(theme == "dark" ? "midnight" : "minimal");
+    }
+  }, [theme]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -54,6 +69,7 @@ export function ThemeProvider({
       localStorage.setItem(storageKey, theme);
       setTheme(theme);
     },
+    connectTheme,
   };
 
   return (

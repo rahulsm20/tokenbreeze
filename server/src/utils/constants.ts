@@ -58,4 +58,5 @@ export const PROVIDERS = {
   POLYGON: "Polygon.io",
   COINGECKO: "CoinGecko",
   COINBASE: "Coinbase",
+  UNISWAP: "Uniswap",
 };

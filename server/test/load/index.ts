@@ -1,5 +1,6 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
+import { DEX_AGGREGATOR_SPECIFIC } from "@/graphql/queries";
 
 // Test configuration
 export const options = {
@@ -20,7 +21,7 @@ export default function () {
   let res = http.post(
     "http://localhost:3000/api/v1/graphql",
     JSON.stringify({
-      query: `query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange) {\n  dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange)\n}`,
+      query: DEX_AGGREGATOR_SPECIFIC,
       operationName: "DexAggregatorSpecific",
       variables: {
         symbol: "tether",

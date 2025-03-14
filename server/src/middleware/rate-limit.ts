@@ -15,7 +15,7 @@ export const rateLimiter = async (
       return res.status(400).json("Rate limited");
     } else {
       const rate = parseInt(data) + 1;
-      await cacheData(cacheKey, rate.toString());
+      await cacheData(cacheKey, rate.toString(), "1 minute");
     }
   } else {
     await cacheData(cacheKey, "0", "1 minute");

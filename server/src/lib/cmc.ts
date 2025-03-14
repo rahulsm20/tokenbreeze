@@ -17,7 +17,7 @@ class CoinMarketCapInstance {
   }
   async getLatestListings() {
     try {
-      const url = `${this.base_url}/v1/cryptocurrency/listings/latest?limit=30`;
+      const url = `${this.base_url}/v1/cryptocurrency/listings/latest`;
       const cacheKey = `cmc:listings:${dayjs().format("YYYY-MM-DD")}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {

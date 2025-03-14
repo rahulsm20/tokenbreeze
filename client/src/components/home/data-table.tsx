@@ -184,9 +184,10 @@ const CoinModal = ({
   open: NewCoinType | null;
   setOpen: (open: NewCoinType | null) => void;
 }) => {
-  const [fetchChartData, { loading, data }] = useLazyQuery(
+  const [fetchChartData, { loading, data, error }] = useLazyQuery(
     DEX_AGGREGATOR_SPECIFIC
   );
+  const [retried, setRetried] = useState(0);
 
   useEffect(() => {
     if (open?.info.id) {
@@ -197,6 +198,26 @@ const CoinModal = ({
       });
     }
   }, [open]);
+
+  useEffect(() => {
+    if (error) {
+      if (retried == 0) {
+        fetchChartData({
+          variables: {
+            symbol: open?.info.name.toLowerCase(),
+          },
+        });
+        setRetried((retry) => retry + 1);
+      } else if (retried == 1) {
+        fetchChartData({
+          variables: {
+            symbol: open?.info.symbol.toLowerCase(),
+          },
+        });
+        setRetried((retry) => retry + 1);
+      }
+    }
+  }, [error, retried]);
 
   const hasPriceIncreased = open?.results
     .map((price) => {
@@ -216,11 +237,6 @@ const CoinModal = ({
           <DialogTitle>
             {open?.info.name} ({open?.info.symbol})
           </DialogTitle>
-          {/* <DialogDescription className="flex gap-2">
-            {open?.tags?.slice(0, 3).map((tag) => (
-              <Badge key={tag}>{tag}</Badge>
-            ))}
-          </DialogDescription> */}
         </DialogHeader>
         <section className="flex flex-col md:flex-row gap-2">
           <div className="flex flex-col gap-5">
@@ -262,7 +278,7 @@ const CoinModal = ({
             className="flex items-center justify-center"
           >
             {loading ? (
-              <Loader className="animate-ping h-4 w-4" />
+              <Loader className="animate-spin h-4 w-4" />
             ) : (
               <LineChart
                 width={730}

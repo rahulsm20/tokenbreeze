@@ -18,12 +18,15 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@rainbow-me/rainbowkit": "^2.2.3",
+    "@tanstack/react-query": "^5.65.0",
     "@tanstack/react-table": "^8.20.5",
     "@vercel/analytics": "^1.4.1",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
+    "connectkit": "^1.8.2",
     "daisyui": "^4.12.14",
     "dayjs": "^1.11.13",
     "graphql": "^16.9.0",
@@ -33,7 +36,9 @@
     "react-router-dom": "^6.28.0",
     "recharts": "^2.13.3",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "^2.22.15",
+    "wagmi": "^2.14.9"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
