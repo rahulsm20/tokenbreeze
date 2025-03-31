@@ -1,4 +1,15 @@
-import { GraphQLObjectType, GraphQLSchema } from "graphql";
+import {
+  GraphQLEnumType,
+  GraphQLFloat,
+  GraphQLList,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from "graphql";
+import {
+  dexAggregator,
+  dexAggregatorSpecific,
+} from "../controllers/aggregator";
 
 export const typeDefs = `#graphql
   scalar JSON
@@ -58,24 +69,97 @@ export const typeDefs = `#graphql
     }
 `;
 
-// export const schema = new GraphQLSchema({
-//   description: "A schema for querying crypto data",
-//   assumeValid: true,
-//   query: new GraphQLObjectType({
-//     name: "Query",
-//     fields: {
-//       dexAggregator: {
-//         type: GraphQLJSON,
-//         resolve: dexAggregator,
-//       },
-//       dexAggregatorSpecific: {
-//         type: GraphQLJSON,
-//         resolve: dexAggregatorSpecific,
-//         args: {
-//           symbol: { type: GraphQLString },
-//           dateRange: { type: new GraphQLList(GraphQLString) },
-//         },
-//       },
-//     },
-//   }),
-// });
+const DateRangeType = new GraphQLEnumType({
+  name: "DateRange",
+  values: {
+    one_hour: { value: "one_hour" },
+    seven_days: { value: "seven_days" },
+    twenty_four_hours: { value: "twenty_four_hours" },
+    thirty_days: { value: "thirty_days" },
+  },
+});
+
+const TokenResponseType = new GraphQLObjectType({
+  name: "TokenResponse",
+  fields: {
+    date: { type: GraphQLFloat },
+    price: { type: GraphQLFloat },
+  },
+});
+
+const TokenResultType = new GraphQLObjectType({
+  name: "TokenResult",
+  fields: {
+    price: { type: GraphQLFloat },
+    provider: { type: GraphQLString },
+    price_change_percentage_24h: { type: GraphQLFloat },
+    percent_change_7d: { type: GraphQLFloat },
+    percent_change_1h: { type: GraphQLFloat },
+    percent_change_24h: { type: GraphQLFloat },
+  },
+});
+
+const QuoteDetailsType = new GraphQLObjectType({
+  name: "QuoteDetails",
+  fields: {
+    price: { type: GraphQLFloat },
+    percent_change_1h: { type: GraphQLFloat },
+    percent_change_7d: { type: GraphQLFloat },
+    percent_change_24h: { type: GraphQLFloat },
+    percent_change_30d: { type: GraphQLFloat },
+    percent_change_60d: { type: GraphQLFloat },
+    percent_change_90d: { type: GraphQLFloat },
+  },
+});
+
+const QuoteType = new GraphQLObjectType({
+  name: "Quote",
+  fields: {
+    USD: { type: QuoteDetailsType },
+  },
+});
+
+const TokenDetailsType = new GraphQLObjectType({
+  name: "TokenDetails",
+  fields: {
+    id: { type: GraphQLString },
+    name: { type: GraphQLString },
+    symbol: { type: GraphQLString },
+    price_change_percentage_24h: { type: GraphQLFloat },
+    current_price: { type: GraphQLFloat },
+    image: { type: GraphQLString },
+    price_change_24h: { type: GraphQLFloat },
+    quote: { type: QuoteType },
+  },
+});
+
+const TokenInfoType = new GraphQLObjectType({
+  name: "TokenInfo",
+  fields: {
+    info: { type: TokenDetailsType },
+    providers: { type: new GraphQLList(GraphQLString) },
+    results: { type: new GraphQLList(TokenResultType) },
+  },
+});
+
+const QueryType = new GraphQLObjectType({
+  name: "Query",
+  fields: {
+    dexAggregator: {
+      type: new GraphQLList(TokenInfoType),
+      resolve: dexAggregator,
+    },
+    dexAggregatorSpecific: {
+      type: new GraphQLList(TokenResponseType),
+      args: {
+        symbol: { type: GraphQLString },
+        dateRange: { type: DateRangeType },
+      },
+      resolve: dexAggregatorSpecific,
+    },
+  },
+});
+
+export const schema = new GraphQLSchema({
+  query: QueryType,
+});

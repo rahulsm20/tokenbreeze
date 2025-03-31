@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { BigNumber } from "@ethersproject/bignumber";
 
 const QUOTER_ABI = [
   {
@@ -20,7 +19,10 @@ const QUOTER_ABI = [
 export class UniswapV3Quoter {
   private quoter: ethers.Contract;
 
-  constructor(provider: ethers.Provider, quoterAddress: string) {
+  constructor(
+    provider: ethers.providers.JsonRpcProvider,
+    quoterAddress: string
+  ) {
     this.quoter = new ethers.Contract(quoterAddress, QUOTER_ABI, provider);
   }
 
@@ -53,7 +55,7 @@ export class UniswapV3Quoter {
 
 // Helper function to format amount with decimals
 export function parseAmount(amount: number, decimals: number): string {
-  return ethers.parseUnits(amount.toString(), decimals).toString();
+  return ethers.utils.parseUnits(amount.toString(), decimals).toString();
 }
 
 // Example usage
@@ -63,7 +65,7 @@ async function main() {
     "https://mainnet.infura.io/v3/584c50ccbff74cdc8770e2889c93272e";
   const QUOTER_ADDRESS = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6"; // Uniswap V3 Quoter
 
-  const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
   const quoter = new UniswapV3Quoter(provider, QUOTER_ADDRESS);
 
   // Example: Quote 1 WETH to USDC
@@ -80,7 +82,7 @@ async function main() {
       amountIn: amountIn,
     });
 
-    console.log("Quote amount out:", ethers.formatUnits(quotedAmount, 6)); // USDC has 6 decimals
+    console.log("Quote amount out:", ethers.utils.formatUnits(quotedAmount, 6)); // USDC has 6 decimals
   } catch (error) {
     console.error("Error:", error);
   }

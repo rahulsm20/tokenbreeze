@@ -10,7 +10,7 @@ import { ModeToggle } from "./dark-mode-toggle";
 const Navbar = () => {
   return (
     <div className="flex flex-wrap items-center p-4 gap-3 justify-between sticky top-0 z-10 backdrop-blur-3xl border-b">
-      <ul className="flex gap-5 items-center">
+      <ul className="flex gap-5 items-center flex-wrap flex-col md:flex-row">
         <li>
           <Link to="/" className="flex gap-1">
             <Waves className="h-6 w-6" />
