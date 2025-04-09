@@ -1,4 +1,3 @@
-
 FROM node:21.6-alpine AS build
 
 WORKDIR /app
@@ -7,10 +6,18 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY ./dist .
+COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
+FROM node:21.6-alpine
+
+WORKDIR /app
+
+COPY --from=build /app /app
+
+RUN npm install
+
+EXPOSE 4000
 
 CMD ["npm", "start"]
