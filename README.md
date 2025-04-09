@@ -24,7 +24,7 @@ Just another token price aggregator.
 
 ### Architecture
 
-![architecture](./client/public/tokenbreeze.PNG)
+![architecture](./client/public/tokenbreeze_arch.png)
 
 ### Setup Locally
 
