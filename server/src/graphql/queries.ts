@@ -10,7 +10,7 @@ export const queries = {
 
 const fragments = {
   tokenInfo: `
-    fragment TokenInfo on TokenInfo {
+    fragment tokenInfo on TokenInfo {
       info {
       id
       name
@@ -41,7 +41,7 @@ const fragments = {
     }
   `,
   tokenResponse: `
-    fragment TokenResponse on TokenResponse {
+    fragment tokenResponse on TokenResponse {
       date
       price
     }
@@ -50,14 +50,14 @@ const fragments = {
 export const DEX_AGGREGATOR = `
   query DexAggregator {
     dexAggregator{
-    ...TokenInfo
+    ...tokenInfo
   }
   }
   ${fragments.tokenInfo}
 `;
 
 export const DEX_AGGREGATOR_SPECIFIC = `
-  query DexAggregatorSpecific($symbol: String!, $dateRange: [String]) {
+  query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange) {
     dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange){
       date
       price

@@ -1,14 +1,10 @@
-import http from "k6/http";
 import { check, sleep } from "k6";
-import { DEX_AGGREGATOR_SPECIFIC } from "@/graphql/queries";
+import http from "k6/http";
 
-// Test configuration
 export const options = {
   thresholds: {
-    // Assert that 99% of requests finish within 3000ms.
     http_req_duration: ["p(99) < 3000"],
   },
-  // Ramp the number of virtual users up and down
   stages: [
     { duration: "30s", target: 15 },
     { duration: "1m", target: 15 },
@@ -16,10 +12,20 @@ export const options = {
   ],
 };
 
-// Simulated user behavior
+const DEX_AGGREGATOR_SPECIFIC = `
+  query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange) {
+    dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange){
+      date
+      price
+    }
+  }
+`;
+
+const API_BASE_URL = __ENV.API_BASE_URL || "http://localhost:4000";
+
 export default function () {
   let res = http.post(
-    "http://localhost:3000/api/v1/graphql",
+    `${API_BASE_URL}/api/v1/graphql`,
     JSON.stringify({
       query: DEX_AGGREGATOR_SPECIFIC,
       operationName: "DexAggregatorSpecific",

@@ -99,8 +99,8 @@ const TokenResultType = new GraphQLObjectType({
   },
 });
 
-const QuoteDetailsType = new GraphQLObjectType({
-  name: "QuoteDetails",
+const QuoteType = new GraphQLObjectType({
+  name: "Quote",
   fields: {
     price: { type: GraphQLFloat },
     percent_change_1h: { type: GraphQLFloat },
@@ -109,13 +109,6 @@ const QuoteDetailsType = new GraphQLObjectType({
     percent_change_30d: { type: GraphQLFloat },
     percent_change_60d: { type: GraphQLFloat },
     percent_change_90d: { type: GraphQLFloat },
-  },
-});
-
-const QuoteType = new GraphQLObjectType({
-  name: "Quote",
-  fields: {
-    USD: { type: QuoteDetailsType },
   },
 });
 
