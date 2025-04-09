@@ -1,7 +1,8 @@
 import { CoinType, NewCoinType } from "@/types";
+import { formatCurrency } from "@/utils";
+import { PROVIDERS } from "@/utils/constants";
 import { ColumnDef } from "@tanstack/react-table";
 import PriceChangeBadge from "./price-change-badge";
-import { formatCurrency } from "@/utils";
 
 export const coinColumns: ColumnDef<CoinType>[] = [
   {
@@ -63,11 +64,11 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
     id: "info.name",
     header: "Token",
     cell: (info) => (
-      <div className="flex items-center text-xs sm:text-base">
+      <div className="flex gap-2 items-center text-xs sm:text-base p-2 md:p-0">
         {info.cell.row.original.info.image && (
           <img src={info.cell.row.original.info.image} className="h-4 w-4" />
         )}
-        <span className="flex p-2 text-xs sm:text-base">
+        <span className="p-2 text-xs sm:text-base hidden md:flex">
           {info.cell.row.original.info.name}
         </span>
         <span className="text-foreground/80 text-xs sm:text-base">
@@ -81,10 +82,15 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
     header: "CoinMarketCap",
     cell: (info) => (
       <div className="text-xs sm:text-base">
-        {formatCurrency(
-          info.cell.row.original.info.current_price ||
-            info.cell.row.original.results?.[0].price
-        )}
+        {info.cell.row.original.results.find(
+          (r) => r.provider === PROVIDERS.COINMARKETCAP
+        )?.price
+          ? formatCurrency(
+              info.cell.row.original.results.find(
+                (r) => r.provider === PROVIDERS.COINMARKETCAP
+              )?.price || 0
+            )
+          : "-"}
       </div>
     ),
   },
@@ -93,10 +99,15 @@ export const newCoinColumns: ColumnDef<NewCoinType>[] = [
     header: "CoinGecko",
     cell: (info) => (
       <div className="text-xs sm:text-base">
-        {formatCurrency(
-          info.cell.row.original.info.current_price ||
-            info.cell.row.original.results?.[0].price
-        )}
+        {info.cell.row.original.results.find(
+          (r) => r.provider === PROVIDERS.COINGECKO
+        )?.price
+          ? formatCurrency(
+              info.cell.row.original.results.find(
+                (r) => r.provider === PROVIDERS.COINGECKO
+              )?.price || 0
+            )
+          : "-"}
       </div>
     ),
   },
