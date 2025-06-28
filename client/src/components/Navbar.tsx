@@ -1,4 +1,4 @@
-import { ArrowUpRight, Coins, Home, LineChart } from "lucide-react";
+import { ArrowUpRight, Home, LineChart } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { ModeToggle } from "./dark-mode-toggle";
 import { Logo } from "./icons";
@@ -39,12 +39,12 @@ const Navbar = () => {
       external: false,
       icon: <LineChart className="h-4 w-4" />,
     },
-    {
-      name: "Payments",
-      href: "/payments",
-      external: false,
-      icon: <Coins className="h-4 w-4" />,
-    },
+    // {
+    //   name: "Payments",
+    //   href: "/payments",
+    //   external: false,
+    //   icon: <Coins className="h-4 w-4" />,
+    // },
   ];
 
   const NavItem = ({ name, href, external, icon }: NavItemProps) => {
