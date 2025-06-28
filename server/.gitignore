@@ -1,5 +1,6 @@
 node_modules
 .env
+bin
 dist
 .nyc_output
 .env.vars.json

@@ -10,8 +10,10 @@ import {
   dexAggregator,
   dexAggregatorSpecific,
 } from "../controllers/aggregator";
+import { quote } from "../controllers/web3";
 
 export const typeDefs = `#graphql
+
   scalar JSON
 
   enum DateRange {
@@ -20,15 +22,16 @@ export const typeDefs = `#graphql
     twenty_four_hours,
     thirty_days
   }
-  
+
   type Query {
     dexAggregator: [TokenInfo]
-    dexAggregatorSpecific (symbol: String!, dateRange: DateRange):[TokenResponse]
+    dexAggregatorSpecific (symbol: String!, dateRange: DateRange, currency: String!):[TokenResponse]
+    quote (tokenOne: String, tokenTwo: String, tokenOneAmount: String, address: String): QuoteDetails
   }
 
   type TokenResponse {
       date: Float
-      price: Float
+      CoinGecko: Float
   }
 
   type TokenInfo {
@@ -44,11 +47,16 @@ export const typeDefs = `#graphql
     percent_change_7d: Float
     percent_change_1h: Float
     percent_change_24h: Float
+    total_supply: Float
+    market_cap: Float
+    total_volume: Float
   }
-  type Quote{
+  
+  type Quote {
     USD: QuoteDetails
   }
-  type QuoteDetails{
+
+  type QuoteDetails {
     price: Float
     percent_change_1h: Float
     percent_change_7d: Float
@@ -57,7 +65,8 @@ export const typeDefs = `#graphql
     percent_change_60d: Float
     percent_change_90d: Float
   }
-  type TokenDetails{
+
+  type TokenDetails {
       id: String
       name: String
       symbol: String
@@ -83,7 +92,7 @@ const TokenResponseType = new GraphQLObjectType({
   name: "TokenResponse",
   fields: {
     date: { type: GraphQLFloat },
-    price: { type: GraphQLFloat },
+    CoinGecko: { type: GraphQLFloat },
   },
 });
 
@@ -135,6 +144,14 @@ const TokenInfoType = new GraphQLObjectType({
   },
 });
 
+const QuoteDetailsType = new GraphQLObjectType({
+  name: "QuoteDetails",
+  fields: {
+    transaction: { type: GraphQLString },
+    price: { type: GraphQLFloat },
+  },
+});
+
 const QueryType = new GraphQLObjectType({
   name: "Query",
   fields: {
@@ -147,8 +164,18 @@ const QueryType = new GraphQLObjectType({
       args: {
         symbol: { type: GraphQLString },
         dateRange: { type: DateRangeType },
+        currency: { type: GraphQLString },
       },
       resolve: dexAggregatorSpecific,
+    },
+    quote: {
+      type: QuoteDetailsType,
+      args: {
+        symbol: { type: GraphQLString },
+        dateRange: { type: DateRangeType },
+        currency: { type: GraphQLString },
+      },
+      resolve: quote,
     },
   },
 });

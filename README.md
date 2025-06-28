@@ -30,6 +30,12 @@ Just another token price aggregator.
 
 - Setup .env files in client and server directories based on the .env.example files
 
+Run both using start script
+
+```
+./start.sh
+```
+
 Run client
 
 ```

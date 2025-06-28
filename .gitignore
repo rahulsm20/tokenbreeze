@@ -1,1 +1,8 @@
 **/*.log
+
+# Ignore all binaries (executables of all systems)
+**/*.exe
+**/*.dll
+**/*.so
+**/*.dylib
+**/*.o

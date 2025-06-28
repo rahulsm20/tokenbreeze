@@ -3,6 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.ts",
+  "bin": {
+    "tokenbreeze-server": "bin/server.js"
+  },
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "assets": [],
+    "targets": [
+      "node18-win-x64",
+      "node18-linux-x64",
+      "node18-macos-x64"
+    ]
+  },
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
     "build": "tsc",
@@ -12,7 +24,8 @@
     "test": "npm run test:unit && npm run test:load",
     "coverage": "nyc npm run test:unit",
     "migrate": "npx prisma migrate dev",
-    "deploy": "npx prisma migrate deploy && npx prisma generate"
+    "deploy": "npx prisma migrate deploy && npx prisma generate",
+    "pkg": "npm run build && pkg ."
   },
   "keywords": [],
   "author": "",
@@ -31,6 +44,7 @@
     "@types/redis": "^4.0.11",
     "@uniswap/sdk-core": "^7.1.0",
     "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.4",
     "@uniswap/v3-sdk": "^3.21.0",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
@@ -40,13 +54,15 @@
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
-    "ethers": "^5.0.8",
+    "ethers": "^6.14.0",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.1",
     "graphql": "^16.9.0",
     "ip": "^2.0.1",
     "jsonwebtoken": "^9.0.2",
     "mocha": "^11.0.1",
+    "pkg": "^5.8.1",
+    "pm2": "^6.0.5",
     "redis": "^4.6.14",
     "web3": "^1.2.11",
     "ws": "^8.17.0"

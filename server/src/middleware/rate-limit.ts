@@ -1,6 +1,6 @@
-import { cacheData, retrieveCachedData } from "../utils/redis";
 import { NextFunction, Request, Response } from "express";
 import ip from "ip";
+import { cacheData, retrieveCachedData } from "../utils/redis";
 
 export const rateLimiter = async (
   req: Request,
@@ -8,6 +8,8 @@ export const rateLimiter = async (
   next: NextFunction
 ) => {
   const address = ip.address();
+  console.log({ address });
+
   const cacheKey = `ip:${address}`;
   const data = await retrieveCachedData(cacheKey);
   if (data) {

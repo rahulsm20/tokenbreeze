@@ -1,6 +1,14 @@
-# Template
+# Tokenbreeze Server
 
-- Typescript
+## Tech Stack
+
 - Node.js
+- Typescript
 - Express.js
-- Prisma
+- GraphQL
+- Apollo Server
+
+## Testing
+
+- Grafana k6
+- mocha + chai

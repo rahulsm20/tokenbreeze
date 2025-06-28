@@ -63,8 +63,8 @@ export type CMCResultType = {
 };
 
 export enum DateRange {
-  one_hour,
-  seven_days,
-  twenty_four_hours,
-  thirty_days,
+  one_hour = "one_hour",
+  seven_days = "seven_days",
+  twenty_four_hours = "twenty_four_hours",
+  thirty_days = "thirty_days",
 }

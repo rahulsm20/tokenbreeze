@@ -13,10 +13,10 @@ export const options = {
 };
 
 const DEX_AGGREGATOR_SPECIFIC = `
-  query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange) {
-    dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange){
+  query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange, $currency: String!) {
+    dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange, currency: $currency) {
       date
-      price
+      CoinGecko
     }
   }
 `;

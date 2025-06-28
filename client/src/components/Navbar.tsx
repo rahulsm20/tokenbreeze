@@ -1,43 +1,86 @@
-import { ArrowUpRight, Github, LineChart, Waves } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowUpRight, Coins, Home, LineChart } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
 import { ModeToggle } from "./dark-mode-toggle";
+import { Logo } from "./icons";
+
+// ------------------------------------------------------
+
+type NavItemProps = {
+  name: string;
+  href: string;
+  external: boolean;
+  icon: React.ReactNode;
+};
+
+// -----------------------------------------------------
 const Navbar = () => {
+  const navItems = [
+    {
+      name: "Home",
+      href: "/",
+      external: false,
+      icon: <Home className="h-4 w-4" />,
+    },
+    {
+      name: "About",
+      href: "https://github.com/rahulsm20/tokenbreeze/blob/main/README.md",
+      external: true,
+      icon: <ArrowUpRight className="h-4 w-4" />,
+    },
+    {
+      name: "Github",
+      href: "https://github.com/rahulsm20/tokenbreeze",
+      external: true,
+      icon: <ArrowUpRight className="h-4 w-4" />,
+    },
+    {
+      name: "Prices",
+      href: "/prices",
+      external: false,
+      icon: <LineChart className="h-4 w-4" />,
+    },
+    {
+      name: "Payments",
+      href: "/payments",
+      external: false,
+      icon: <Coins className="h-4 w-4" />,
+    },
+  ];
+
+  const NavItem = ({ name, href, external, icon }: NavItemProps) => {
+    return (
+      <li>
+        <NavLink
+          to={href}
+          target={external ? "_blank" : undefined}
+          className={`flex ${
+            !external && "items-center"
+          } gap-1 hover:underline`}
+        >
+          <span>{name}</span>
+          {icon}
+        </NavLink>
+      </li>
+    );
+  };
   return (
-    <div className="flex flex-wrap items-center p-4 gap-3 justify-between sticky top-0 z-10 backdrop-blur-3xl border-b">
-      <ul className="flex gap-5 items-center flex-wrap">
+    <div className="flex flex-wrap items-center p-3 gap-3 justify-between sticky top-0 z-10 backdrop-blur-3xl border-b w-full">
+      <ul className="flex gap-5 items-center flex-wrap text-sm">
         <li>
           <Link to="/" className="gap-1 flex items-center">
-            <Waves className="h-6 w-6" />
+            <Logo />
             <span className="hidden sm:flex items-center">TokenBreeze</span>
           </Link>
         </li>
-        <li>
-          <a
-            href="https://github.com/rahulsm20/tokenbreeze/blob/main/README.md"
-            target="_blank"
-            className="flex hover:underline"
-          >
-            <span>About</span>
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://github.com/rahulsm20/tokenbreeze"
-            target="_blank"
-            className="flex items-center gap-1 hover:underline"
-          >
-            <span>Github</span>
-            <Github className="h-4 w-4" />
-          </a>
-        </li>
-
-        <Link to="/prices" className="flex items-center gap-1 hover:underline">
-          <a className="flex items-center gap-1 hover:underline">
-            <span>Prices</span>
-            <LineChart className="h-4 w-4" />
-          </a>
-        </Link>
+        {navItems.map((item) => (
+          <NavItem
+            key={item.name}
+            name={item.name}
+            href={item.href}
+            external={item.external}
+            icon={item.icon}
+          />
+        ))}
       </ul>
       <ModeToggle />
     </div>

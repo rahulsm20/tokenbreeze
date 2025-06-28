@@ -1,7 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import dayjs from "dayjs";
-import { cacheData, retrieveCachedData } from "../utils/redis";
 import { CMCResultType, DateRange } from "../../types";
+import { cacheData, retrieveCachedData } from "../utils/redis";
 
 class CoingeckoInstance {
   private base_url: string;
@@ -32,30 +32,33 @@ class CoingeckoInstance {
       return err;
     }
   }
-  async getHistoricalData(symbol: string, dateRange: DateRange) {
+  async getHistoricalData(
+    symbol: string,
+    dateRange: DateRange,
+    currency: string
+  ) {
     try {
-      let days = 1;
+      let from;
+      const to = dayjs().unix();
       switch (dateRange) {
-        case DateRange["one_hour"]:
-          days = 1;
+        case DateRange.one_hour:
+          from = dayjs().subtract(1, "hour").unix();
           break;
-        case DateRange["twenty_four_hours"]:
-          days = 1;
+        case DateRange.twenty_four_hours:
+          from = dayjs().subtract(1, "day").unix();
           break;
-        case DateRange["seven_days"]:
-          days = 7;
+        case DateRange.seven_days:
+          from = dayjs().subtract(7, "day").unix();
           break;
-        case DateRange["thirty_days"]:
-          days = 30;
+        case DateRange.thirty_days:
+          from = dayjs().subtract(30, "day").unix();
           break;
         default:
-          days = 1;
+          from = dayjs().subtract(1, "day").unix();
           break;
       }
-      const url = `${this.base_url}/v3/coins/${symbol}/market_chart?vs_currency=usd&days=${days}`;
-      const cacheKey = `cg:historical:${symbol}:${dayjs().format(
-        "YYYY-MM-DD"
-      )}:${days}`;
+      const url = `${this.base_url}/v3/coins/${symbol}/market_chart/range?vs_currency=${currency}&from=${from}&to=${to}`;
+      const cacheKey = `cg:historical:${symbol}:${from}:${to}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
         return JSON.parse(cachedData);
@@ -65,12 +68,15 @@ class CoingeckoInstance {
       await cacheData(cacheKey, JSON.stringify(data));
       return data;
     } catch (err) {
+      if (err instanceof AxiosError) {
+        console.log("Error in getHistoricalData", err.response?.data);
+      }
       return err;
     }
   }
   async getCoinData(symbol: string) {
     try {
-      const url = `${this.base_url}/v3/coins/${symbol}`;
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`;
       const cacheKey = `cg:coin:${symbol}:${dayjs().format("YYYY-MM-DD")}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {

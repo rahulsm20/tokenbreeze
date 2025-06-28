@@ -1,5 +1,5 @@
-import { createClient } from "redis";
 import dotenv from "dotenv";
+import { createClient } from "redis";
 dotenv.config();
 
 export const redisClient = createClient({
@@ -24,6 +24,13 @@ export const disconnectRedis = async () => {
   }
 };
 
+/**
+ * Function to cache data in Redis
+ * @param key
+ * @param data
+ * @param lifetime
+ * @returns Promise<string>
+ */
 export const cacheData = async (
   key: string,
   data: string,
