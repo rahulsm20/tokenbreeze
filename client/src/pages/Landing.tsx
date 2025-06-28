@@ -69,7 +69,7 @@ const Landing = () => {
     };
   }) => {
     return (
-      <Card className="flex flex-col w-60 p-4 backdrop-blur-md items-start gap-2 hover:-translate-y-3 transition-transform duration-200 ease-in-out">
+      <Card className="flex flex-col w-60 p-4 backdrop-blur-md items-start gap-2 hover:-translate-y-3 transition-transform duration-500 ease-in-out">
         <CardTitle className="text-start p-2">{feature.name}</CardTitle>
         <CardDescription className="text-start p-2">
           {feature.description}
@@ -90,7 +90,7 @@ const Landing = () => {
           TokenBreeze
           <Logo />
         </h1>
-        <p className="text-lg">Not just another token price aggregator.</p>
+        <p className="text-lg">Just another token price aggregator.</p>
         <Link to="/prices" className="flex items-center gap-1">
           <Button className="text-white">
             Start Exploring <ArrowRight className="inline h-4 w-4" />

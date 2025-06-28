@@ -8,8 +8,6 @@ export const rateLimiter = async (
   next: NextFunction
 ) => {
   const address = ip.address();
-  console.log({ address });
-
   const cacheKey = `ip:${address}`;
   const data = await retrieveCachedData(cacheKey);
   if (data) {

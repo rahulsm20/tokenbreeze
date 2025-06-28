@@ -22,6 +22,12 @@ const Navbar = () => {
       icon: <Home className="h-4 w-4" />,
     },
     {
+      name: "Prices",
+      href: "/prices",
+      external: false,
+      icon: <LineChart className="h-4 w-4" />,
+    },
+    {
       name: "About",
       href: "https://github.com/rahulsm20/tokenbreeze/blob/main/README.md",
       external: true,
@@ -33,12 +39,6 @@ const Navbar = () => {
       external: true,
       icon: <ArrowUpRight className="h-4 w-4" />,
     },
-    {
-      name: "Prices",
-      href: "/prices",
-      external: false,
-      icon: <LineChart className="h-4 w-4" />,
-    },
     // {
     //   name: "Payments",
     //   href: "/payments",
@@ -49,7 +49,7 @@ const Navbar = () => {
 
   const NavItem = ({ name, href, external, icon }: NavItemProps) => {
     return (
-      <li>
+      <li title={name}>
         <NavLink
           to={href}
           target={external ? "_blank" : undefined}
@@ -57,7 +57,7 @@ const Navbar = () => {
             !external && "items-center"
           } gap-1 hover:underline`}
         >
-          <span>{name}</span>
+          {<span>{name}</span>}
           {icon}
         </NavLink>
       </li>
@@ -69,7 +69,6 @@ const Navbar = () => {
         <li>
           <Link to="/" className="gap-1 flex items-center">
             <Logo />
-            <span className="hidden sm:flex items-center">TokenBreeze</span>
           </Link>
         </li>
         {navItems.map((item) => (
