@@ -1,12 +1,12 @@
-import { describe, it } from "mocha";
-import { graphql } from "graphql";
 import assert from "assert";
+import dotenv from "dotenv";
+import { graphql } from "graphql";
+import { describe, it } from "mocha";
 import {
   DEX_AGGREGATOR,
   DEX_AGGREGATOR_SPECIFIC,
 } from "../../src/graphql/queries";
 import { schema } from "../../src/graphql/typedefs";
-import dotenv from "dotenv";
 dotenv.config();
 
 describe("listing test", () => {
@@ -37,6 +37,7 @@ describe("specific coin historical data test", () => {
       source: query,
       variableValues: {
         symbol: "bitcoin",
+        currency: "usd",
       },
     });
 

@@ -105,6 +105,9 @@ const TokenResultType = new GraphQLObjectType({
     percent_change_7d: { type: GraphQLFloat },
     percent_change_1h: { type: GraphQLFloat },
     percent_change_24h: { type: GraphQLFloat },
+    total_supply: { type: GraphQLFloat },
+    market_cap: { type: GraphQLFloat },
+    total_volume: { type: GraphQLFloat },
   },
 });
 
