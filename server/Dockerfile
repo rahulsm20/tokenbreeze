@@ -1,23 +1,15 @@
-FROM node:21.6-alpine AS build
+# syntax=docker/dockerfile:1
+FROM oven/bun:1.1.13 as base
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./bun.lock /app/
+COPY ./package.json /app/
 
-RUN npm install
+RUN bun install --frozen-lockfile
 
-COPY . .
+COPY . /app
 
-RUN npm run build
+RUN bun run build
 
-FROM node:21.6-alpine
-
-WORKDIR /app
-
-COPY --from=build /app /app
-
-RUN npm install
-
-EXPOSE 4000
-
-CMD ["npm", "start"]
+CMD ["bun", "start"]
