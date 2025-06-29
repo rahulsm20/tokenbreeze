@@ -16,9 +16,9 @@
     ]
   },
   "scripts": {
-    "dev": "ts-node-dev src/server.ts",
-    "build": "tsc",
-    "start": "node dist/src/server.js",
+    "dev": "bun --watch src/server.ts",
+    "build": "bun build src/server.ts --outdir ./dist --target node",
+    "start": "bun dist/server.js",
     "test:unit": "mocha --exit --timeout 10000 --require ts-node/register test/unit/*.test.ts",
     "test:load": "k6 run test/load/index.ts",
     "test": "npm run test:unit && npm run test:load",
