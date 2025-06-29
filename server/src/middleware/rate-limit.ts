@@ -1,6 +1,6 @@
+import { cacheData, retrieveCachedData } from "@/utils/redis";
 import { NextFunction, Request, Response } from "express";
 import ip from "ip";
-import { cacheData, retrieveCachedData } from "../utils/redis";
 
 export const rateLimiter = async (
   req: Request,

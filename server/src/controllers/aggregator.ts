@@ -1,8 +1,11 @@
-import { CMCResultType, DateRange } from "../../types";
-import { cmcClient } from "../lib/cmc";
-import { coingeckoClient } from "../lib/coingecko";
-import { logger } from "../logger";
-import { PROVIDERS } from "../utils/constants";
+import { cmcClient } from "@/lib/cmc";
+import { coingeckoClient } from "@/lib/coingecko";
+import { logger } from "@/logger";
+import { CMCResultType, DateRange } from "@/types";
+import { PROVIDERS } from "@/utils/constants";
+import { cacheData, retrieveCachedData } from "@/utils/redis";
+import { ethers } from "ethers";
+import { oneInchAggregator } from "./aggregators/oneinch";
 
 /**
  * Fetches historical data for a specific token from CoinGecko.
@@ -22,6 +25,18 @@ export const dexAggregatorSpecific = async (
     if (!symbol) {
       throw new Error("Please provide a valid symbol");
     }
+    const key = `historical_data:${symbol}:${dateRange}:${currency}`;
+    const cachedData = await retrieveCachedData(key);
+    if (cachedData) {
+      let data = JSON.parse(cachedData);
+
+      // Convert date strings back to Date objects
+      data = data.map((item: any) => ({
+        ...item,
+        date: new Date(item.date),
+      }));
+      return data;
+    }
     const listings = await coingeckoClient.getHistoricalData(
       symbol,
       dateRange,
@@ -35,6 +50,9 @@ export const dexAggregatorSpecific = async (
         CoinGecko: Number(price[1].toFixed(4)),
       });
     }
+
+    await cacheData(key, JSON.stringify(res));
+
     return res;
   } catch (err) {
     console.log(err);
@@ -45,19 +63,23 @@ export const dexAggregatorSpecific = async (
 
 /**
  * Fetches the latest listings from CoinMarketCap and CoinGecko, and combines them with Uniswap data.
- * @param {any} _ - Unused parameter.
- * @param {Object} args - The arguments object.
- * @param {string[]} args.dateRange - The date range for the historical data.
- * @returns {Promise<any>} - The combined listings data.
  */
 export const dexAggregator = async (
   _: any,
-  { dateRange }: { dateRange: string[] }
+  { currency }: { currency: string } = {
+    currency: "usd",
+  }
 ) => {
   try {
-    const cmcListings = (await cmcClient.getLatestListings()) as CMCResultType;
-    const { data } = cmcListings;
+    const cmcListings = (await cmcClient.getLatestListings(
+      currency
+    )) as CMCResultType;
+
+    const { data = [] } = cmcListings;
+
     let result = new Map();
+
+    const CURRENCY = currency.toUpperCase();
 
     for (const listing of data) {
       const existing = result.get(listing.symbol) || [];
@@ -67,10 +89,10 @@ export const dexAggregator = async (
           ...(existing?.results || []),
           {
             provider: PROVIDERS.COIN_MARKET_CAP,
-            price: listing.quote.USD.price,
-            percent_change_7d: listing.quote.USD.percent_change_7d,
-            percent_change_24h: listing.quote.USD.percent_change_24h,
-            percent_change_1h: listing.quote.USD.percent_change_1h,
+            price: listing.quote[CURRENCY].price,
+            percent_change_7d: listing.quote[CURRENCY].percent_change_7d,
+            percent_change_24h: listing.quote[CURRENCY].percent_change_24h,
+            percent_change_1h: listing.quote[CURRENCY].percent_change_1h,
             total_supply: listing.total_supply,
           },
         ],
@@ -78,13 +100,15 @@ export const dexAggregator = async (
       });
     }
 
-    const cgData = await coingeckoClient.getLatestListings();
+    const cgData = await coingeckoClient.getLatestListings(currency);
+
     for (const listing of cgData) {
-      const existing = result.get(listing.symbol.toUpperCase()) || [];
-      result.set(listing.symbol.toUpperCase(), {
+      const symbol = listing.symbol.toUpperCase();
+      const existing = result.get(symbol) || [];
+      result.set(symbol, {
         info: {
           ...{ ...existing.info, ...listing },
-          symbol: listing.symbol.toUpperCase(),
+          symbol,
         },
         results: [
           ...(existing?.results || []),
@@ -101,22 +125,49 @@ export const dexAggregator = async (
       });
     }
 
+    const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
     const res = Array.from(result.values());
-    // for (const r of res) {
-    //   const address = r.info?.platform?.token_address;
-    //   const id = r.info?.id;
-    //   if (address) {
-    //     const quote = await getQuoteFromUniswap({ id, address });
-    //     if (quote) {
-    //       r.results.push({
-    //         provider: PROVIDERS.UNISWAP,
-    //         price: quote,
-    //       });
-    //       r.providers.push(PROVIDERS.UNISWAP);
-    //     }
+    for (const r of res) {
+      const address = r.info?.platform?.token_address;
+      if (address && address != USDC && ethers.isAddress(address)) {
+        await oneInchAggregator(address, r);
+      }
+    }
+    return res;
+
+    //     const price = ethers.formatUnits(
+    //       parsedQuote.toAmount || parsedQuote.toTokenAmount,
+    //       6
+    //     );
+
+    //     r.results.push({
+    //       provider: PROVIDERS.ONEINCH,
+    //       price,
+    //     });
+    //     r.providers.push(PROVIDERS.ONEINCH);
+    //     continue;
+    //   }
+
+    //   const quote = await get1InchQuote(
+    //     address,
+    //     USDC,
+    //     ethers.parseEther("1").toString()
+    //   );
+
+    //   if (quote) {
+    //     await cacheData(cacheKey, JSON.stringify(quote), "5 mins");
+    //     const price = ethers.formatUnits(
+    //       quote.toAmount || quote.toTokenAmount,
+    //       6
+    //     );
+    //     r.results.push({
+    //       provider: PROVIDERS.ONEINCH,
+    //       price,
+    //     });
+    //     r.providers.push(PROVIDERS.ONEINCH);
+    //     await delay(500);
     //   }
     // }
-    return res;
   } catch (err) {
     console.log(err);
     return { err };

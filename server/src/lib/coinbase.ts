@@ -1,5 +1,5 @@
+import { API_KEY } from "@/utils/constants";
 import { Coinbase } from "@coinbase/coinbase-sdk";
-import { API_KEY } from "../utils/constants";
 
 class CoinbaseClient {
   client: Coinbase;

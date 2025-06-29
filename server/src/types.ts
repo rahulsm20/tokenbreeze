@@ -42,7 +42,7 @@ export type CMCResultType = {
     tvl_ratio: null;
     last_updated: string;
     quote: {
-      USD: {
+      [key: string]: {
         price: number;
         volume_24h: number;
         volume_change_24h: number;

@@ -1,4 +1,5 @@
 // ------------------------------------------------------------------------------
+import CurrencySelector from "@/components/currency-selector";
 import { newCoinColumns } from "@/components/home/columns";
 import { DataTable } from "@/components/home/data-table";
 import Layout from "@/components/Layout";
@@ -18,6 +19,7 @@ import {
   Info,
   RefreshCcw,
 } from "lucide-react";
+import { useState } from "react";
 
 /**
  * Home component that displays aggregated cryptocurrency prices.
@@ -25,11 +27,14 @@ import {
  * @returns Home component
  */
 const Home = () => {
+  const [currency, setCurrency] = useState("usd");
+  const [isRefetching, setIsRefetching] = useState(false);
+
   const {
     loading: loadingData,
     data: dexData,
     refetch,
-  } = useQuery(DEX_AGGREGATOR);
+  } = useQuery(DEX_AGGREGATOR, { variables: { currency } });
 
   const tooltipData = (
     <div className="text-wrap w-40 p-2">
@@ -37,9 +42,32 @@ const Home = () => {
     </div>
   );
 
+  const handleRefetch = async () => {
+    try {
+      setIsRefetching(true);
+      await refetch();
+    } finally {
+      setIsRefetching(false);
+    }
+  };
+
+  const isPresent =
+    dexData &&
+    dexData.dexAggregator &&
+    dexData.dexAggregator.length > 0 &&
+    dexData.dexAggregator.some(
+      (item: { providers: { name: string }[] }) =>
+        item.providers &&
+        item.providers.some(
+          (provider: { name: string }) => provider.name === "1inch"
+        )
+    );
+
+  console.log({ isPresent });
+
   return (
     <Layout>
-      <div className="p-10 flex flex-col gap-5">
+      <div className="p-10 flex flex-col gap-3">
         <h1 className="flex text-lg sm:text-xl items-center gap-2">
           <span>Aggregated Cryptocurrency Prices</span>
           <TooltipProvider>
@@ -55,21 +83,27 @@ const Home = () => {
           <Button
             className="ml-auto"
             variant="outline"
-            onClick={() => refetch()}
+            onClick={handleRefetch}
+            disabled={isRefetching || loadingData}
           >
-            <RefreshCcw />
+            <RefreshCcw
+              className={isRefetching ? "animate-spin text-primary" : ""}
+            />
           </Button>
+          <CurrencySelector currency={currency} setCurrency={setCurrency} />
         </h1>
         {loadingData ? (
           <Ellipsis className="animate-pulse" />
         ) : (
           <DataTable
-            columns={newCoinColumns}
+            columns={() => newCoinColumns(currency)}
             data={dexData ? dexData.dexAggregator : []}
             paginate
             showPageData={false}
             previousIcon={<ChevronLeft />}
             nextIcon={<ChevronRight />}
+            currency={currency}
+            setCurrency={setCurrency}
           />
         )}
       </div>

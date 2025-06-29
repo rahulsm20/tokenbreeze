@@ -1,7 +1,7 @@
+import { cacheData, retrieveCachedData } from "@/utils/redis";
 import { IRestClient, restClient } from "@polygon.io/client-js";
 import dayjs from "dayjs";
 import dotenv from "dotenv";
-import { cacheData, retrieveCachedData } from "../utils/redis";
 dotenv.config();
 export const polygonClient = restClient(process.env.POLYGON_API_KEY);
 

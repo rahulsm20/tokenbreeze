@@ -31,13 +31,13 @@ const Navbar = () => {
       name: "About",
       href: "https://github.com/rahulsm20/tokenbreeze/blob/main/README.md",
       external: true,
-      icon: <ArrowUpRight className="h-4 w-4" />,
+      icon: <ArrowUpRight className="h-3 w-3" />,
     },
     {
       name: "Github",
       href: "https://github.com/rahulsm20/tokenbreeze",
       external: true,
-      icon: <ArrowUpRight className="h-4 w-4" />,
+      icon: <ArrowUpRight className="h-3 w-3" />,
     },
     // {
     //   name: "Payments",
@@ -53,19 +53,18 @@ const Navbar = () => {
         <NavLink
           to={href}
           target={external ? "_blank" : undefined}
-          className={`flex ${
-            !external && "items-center"
-          } gap-1 hover:underline`}
+          className={`flex ${!external && "items-center"} hover:underline`}
         >
           {<span>{name}</span>}
-          {icon}
+          {external && icon}
         </NavLink>
       </li>
     );
   };
+
   return (
-    <div className="flex flex-wrap items-center p-3 gap-3 justify-between sticky top-0 z-10 backdrop-blur-3xl border-b w-full">
-      <ul className="flex gap-5 items-center flex-wrap text-sm">
+    <div className="flex flex-wrap items-center p-2 gap-3 justify-between sticky top-0 z-10 backdrop-blur-3xl border-b w-full">
+      <ul className="flex gap-5 items-center flex-wrap text-xs">
         <li>
           <Link to="/" className="gap-1 flex items-center">
             <Logo />

@@ -1,31 +1,17 @@
 // ------------------------------------------------------
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { DEX_AGGREGATOR_SPECIFIC } from "@/graphql/queries";
 import { NewCoinType } from "@/types";
 import { formatCurrency } from "@/utils";
 import { useLazyQuery } from "@apollo/client";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import { Loader } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import {
-  NameType,
-  Payload,
-  ValueType,
-} from "recharts/types/component/DefaultTooltipContent";
-import { ContentType } from "recharts/types/component/Tooltip";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import StockChart from "../charts/StockChart";
+import CurrencySelector from "../currency-selector";
 import { OtherDetailsColumns } from "../data/table/columns";
+import { TimeRangeSelector } from "../time-range-selector";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import {
@@ -45,6 +31,8 @@ import {
 } from "../ui/table";
 
 dayjs.extend(advancedFormat);
+
+// ------------------------------------------------------
 
 /**
  * CoinModal.tsx
@@ -79,22 +67,21 @@ dayjs.extend(advancedFormat);
  * <CoinModal open={coin} setOpen={setCoin} />
  */
 export const CoinModal = ({
+  currency,
+  setCurrency = () => {},
   open,
   setOpen,
 }: {
   open: NewCoinType | null;
   setOpen: (open: NewCoinType | null) => void;
+  currency: string;
+  setCurrency: (currency: string) => void;
 }) => {
   const [fetchChartData, { loading, data, error }] = useLazyQuery(
-    DEX_AGGREGATOR_SPECIFIC,
-    {
-      fetchPolicy: "no-cache",
-    }
+    DEX_AGGREGATOR_SPECIFIC
   );
   const [retried, setRetried] = useState(0);
   const [timeRange, setTimeRange] = useState("24h");
-  const [currency, setCurrency] = useState("usd");
-
   useEffect(() => {
     if (open?.info.id) {
       fetchChartData({
@@ -145,15 +132,6 @@ export const CoinModal = ({
     "1h": "one_hour",
   };
 
-  const updateVariable = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    updateState: (range: string) => void
-  ) => {
-    const target = e.target as HTMLElement;
-    const range = target.innerText.toLowerCase() || "";
-    updateState(range);
-  };
-
   return (
     <Dialog
       open={open ? true : false}
@@ -170,62 +148,11 @@ export const CoinModal = ({
         </DialogHeader>
         <DialogDescription className="flex flex-col gap-2">
           <div className="flex gap-2 w-full justify-between">
-            <Tabs defaultValue="24h" value={timeRange}>
-              <TabsList>
-                <TabsTrigger
-                  value="24h"
-                  onClick={(e) => {
-                    updateVariable(e, setTimeRange);
-                  }}
-                >
-                  24h
-                </TabsTrigger>
-                <TabsTrigger
-                  value="7d"
-                  onClick={(e) => {
-                    updateVariable(e, setTimeRange);
-                  }}
-                >
-                  7d
-                </TabsTrigger>
-                <TabsTrigger
-                  value="30d"
-                  onClick={(e) => {
-                    updateVariable(e, setTimeRange);
-                  }}
-                >
-                  30d
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <Tabs defaultValue="usd" value={currency}>
-              <TabsList>
-                <TabsTrigger
-                  value="usd"
-                  onClick={(e) => {
-                    updateVariable(e, setCurrency);
-                  }}
-                >
-                  USD
-                </TabsTrigger>
-                <TabsTrigger
-                  value="gbp"
-                  onClick={(e) => {
-                    updateVariable(e, setCurrency);
-                  }}
-                >
-                  GBP
-                </TabsTrigger>
-                <TabsTrigger
-                  value="inr"
-                  onClick={(e) => {
-                    updateVariable(e, setCurrency);
-                  }}
-                >
-                  INR
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <TimeRangeSelector
+              timeRange={timeRange}
+              setTimeRange={setTimeRange}
+            />
+            <CurrencySelector currency={currency} setCurrency={setCurrency} />
           </div>
           <section className="flex flex-col md:flex-row gap-2">
             <div className="flex flex-col gap-5">
@@ -261,55 +188,16 @@ export const CoinModal = ({
                 );
               })}
             </div>
-            <ResponsiveContainer
-              width="80%"
-              height={500}
-              className="flex items-center justify-center"
-            >
-              {loading ? (
-                <Loader className="animate-spin h-4 w-4" />
-              ) : data?.dexAggregatorSpecific.length > 0 ? (
-                <LineChart
-                  width={400}
-                  height={400}
-                  data={data?.dexAggregatorSpecific}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <XAxis
-                    dataKey="date"
-                    domain={["dataMin-100", "dataMax"]}
-                    tickFormatter={(val) => XAxisTickFormatter(val, timeRange)}
-                  />
-                  <YAxis
-                    allowDataOverflow
-                    domain={["auto", "auto"]}
-                    type="number"
-                    tickFormatter={(data) => YAxisTickFormatter(data, currency)}
-                  />
-                  <Tooltip
-                    content={
-                      <CustomizedTooltip {...data} currency={currency} />
-                    }
-                  />
-                  <Legend />
-                  <Line
-                    dot={false}
-                    type="monotone"
-                    dataKey="CoinGecko"
-                    stroke={hasPriceIncreased ? "#82ca9d" : "#ef4444"}
-                    fill="#82ca9d"
-                  />
-                  <CartesianGrid strokeDasharray="4 1 2" />
-                </LineChart>
-              ) : (
-                <div className="flex items-center justify-center h-full w-full">
-                  <span className="text-gray-500">No data available</span>
-                </div>
-              )}
-            </ResponsiveContainer>
+            <StockChart
+              loading={loading}
+              data={data}
+              timeRange={timeRange}
+              currency={currency}
+              hasPriceIncreased={hasPriceIncreased}
+            />
           </section>
         </DialogDescription>
-        <Card className="p-3 border-none hover:bg-inherit">
+        <Card className="p-3 border-none hover:bg-inherit hover:shadow-none">
           {open && open?.results.length > 0 && (
             <div className="flex flex-col">
               <CardHeader className="p-2 underline underline-offset-8">
@@ -335,7 +223,9 @@ export const CoinModal = ({
                               {res.provider}
                             </TableCell>
                             <TableCell className="text-start">
-                              {res.total_supply.toLocaleString("en-US")}
+                              {res?.total_supply
+                                ? res?.total_supply?.toLocaleString("en-US")
+                                : "-"}
                             </TableCell>
                             <TableCell className="text-start">
                               {res.market_cap
@@ -354,72 +244,4 @@ export const CoinModal = ({
       </DialogContent>
     </Dialog>
   );
-};
-
-// ------------------------------------------------------
-// Helper functions and components
-
-type CustomizedTooltipProps = {
-  active: any;
-  payload: Payload<ValueType, NameType>[] | undefined;
-  currency: string;
-} & ContentType<ValueType, NameType>;
-
-const CustomizedTooltip: React.FC<CustomizedTooltipProps> = ({
-  active,
-  payload,
-  currency,
-}) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-transparent backdrop-blur-sm border p-2 rounded-md flex flex-col justify-between">
-        <p className="flex gap-2">
-          <span>{`${dayjs(payload[0]?.payload.date).format(
-            "MMM Do YYYY"
-          )}`}</span>
-          <span>{`${dayjs(payload[0]?.payload.date).format("hh:mm a")}`}</span>
-        </p>
-        <span className="flex">
-          CoinGecko: {formatCurrency(payload[0]?.payload.CoinGecko, currency)}
-        </span>
-      </div>
-    );
-  }
-
-  return <></>;
-};
-
-/**
- * XAxisTickFormatter function formats the x-axis ticks based on the time range.
- * It uses the dayjs library to format the date and time.
- * @param value
- * @param timeRange
- * @returns
- */
-const XAxisTickFormatter = (value: number, timeRange: string) => {
-  if (timeRange == "24h") {
-    return dayjs(value).format("h:mm a");
-  }
-  if (timeRange == "7d") {
-    return dayjs(value).format("MMM D");
-  }
-  if (timeRange == "30d") {
-    return dayjs(value).format("MMM D");
-  }
-  return dayjs(value).format("MMM D");
-};
-
-/**
- * YAxisTickFormatter function formats the y-axis ticks based on the currency.
- * It uses the formatCurrency utility function to format the value.
- * @param value
- * @param currency
- * @returns
- */
-const YAxisTickFormatter = (value: number, currency: string) => {
-  if (value > 1000) {
-    return `$${(value / 1000).toFixed(2)}k`;
-  }
-
-  return formatCurrency(parseFloat(value.toFixed(4)), currency);
 };

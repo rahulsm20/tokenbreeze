@@ -1,5 +1,5 @@
 export const formatCurrency = (value: number, currency = "USD"): string => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(`en-${currency.slice(0, 2).toUpperCase()}`, {
     style: "currency",
     currency: currency?.toUpperCase() || "USD",
     maximumSignificantDigits: 6,

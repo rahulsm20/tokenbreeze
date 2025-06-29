@@ -41,10 +41,10 @@ export const cacheData = async (
     const cached = await redisClient.set(key, data, {
       EX:
         lifetime == "5 mins"
-          ? 60 * 5 * 5
+          ? 60 * 5
           : lifetime == "1 minute"
           ? 60 * 1
-          : 60 * 60 * 24,
+          : 60 * 60 * 24, // default to 1 day
     });
     return cached;
   } else {

@@ -1,3 +1,5 @@
+import { dexAggregator, dexAggregatorSpecific } from "@/controllers/aggregator";
+import { quote } from "@/controllers/web3";
 import {
   GraphQLEnumType,
   GraphQLFloat,
@@ -6,11 +8,6 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from "graphql";
-import {
-  dexAggregator,
-  dexAggregatorSpecific,
-} from "../controllers/aggregator";
-import { quote } from "../controllers/web3";
 
 export const typeDefs = `#graphql
 
@@ -24,7 +21,7 @@ export const typeDefs = `#graphql
   }
 
   type Query {
-    dexAggregator: [TokenInfo]
+    dexAggregator(currency: String!): [TokenInfo]
     dexAggregatorSpecific (symbol: String!, dateRange: DateRange, currency: String!):[TokenResponse]
     quote (tokenOne: String, tokenTwo: String, tokenOneAmount: String, address: String): QuoteDetails
   }

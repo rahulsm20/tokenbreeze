@@ -34,3 +34,19 @@ export type BalanceChartDataType = {
   outgress: number;
   ingress: number;
 };
+
+export const timeRangeMap = {
+  "24h": "twenty_four_hours",
+  "7d": "seven_days",
+  "30d": "thirty_days",
+  "1h": "one_hour",
+};
+
+export const updateVariable = (
+  e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  updateState: (range: string) => void
+) => {
+  const target = e.target as HTMLElement;
+  const range = target.innerText.toLowerCase() || "";
+  updateState(range);
+};

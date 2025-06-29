@@ -101,3 +101,11 @@ export type onSwapProps = {
   from: string;
   amount: string;
 };
+
+export type StockChartPropsType = {
+  loading: boolean;
+  data: any;
+  timeRange: string;
+  currency: string;
+  hasPriceIncreased: boolean | undefined;
+};

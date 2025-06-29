@@ -10,7 +10,6 @@ import {
 import {
   ArrowRight,
   Book,
-  Coins,
   Computer,
   RefreshCcw,
   Scroll,
@@ -44,12 +43,12 @@ const Landing = () => {
       description: "Navigate easily with our intuitive design.",
       icon: <Computer />,
     },
-    {
-      id: 5,
-      name: "Send and receive tokens",
-      description: "Easily send or receive tokens with our platform.",
-      icon: <Coins />,
-    },
+    // {
+    //   id: 5,
+    //   name: "Send and receive tokens",
+    //   description: "Easily send or receive tokens with our platform.",
+    //   icon: <Coins />,
+    // },
     {
       id: 6,
       name: "No signup required",

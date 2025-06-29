@@ -1,8 +1,9 @@
-import {
-  dexAggregator,
-  dexAggregatorSpecific,
-} from "../controllers/aggregator";
-import { quote } from "../controllers/web3";
+//--------------------------------------------
+
+import { dexAggregator, dexAggregatorSpecific } from "@/controllers/aggregator";
+import { quote } from "@/controllers/web3";
+
+//--------------------------------------------
 
 export const queries = {
   dexAggregator,
@@ -52,11 +53,12 @@ const fragments = {
     }
   `,
 };
+
 export const DEX_AGGREGATOR = `
-  query DexAggregator {
-    dexAggregator{
-    ...tokenInfo
-  }
+  query DexAggregator(currency: String!) {
+    dexAggregator(currency: $currency) {
+      ...tokenInfo
+    }
   }
   ${fragments.tokenInfo}
 `;

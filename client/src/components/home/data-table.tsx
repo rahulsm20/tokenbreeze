@@ -25,16 +25,22 @@ import { useState } from "react";
 import { CoinModal } from "../modal/coin-modal";
 import { Input } from "../ui/input";
 
+//-------------------------------------------------------------------
+
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns: () => ColumnDef<TData, TValue>[];
   data: TData[];
   paginate?: boolean;
   previousIcon?: string | React.ReactNode;
   nextIcon?: string | React.ReactNode;
   showPageData?: boolean;
+  currency?: string;
+  setCurrency?: (currency: string) => void;
 }
 
 dayjs.extend(advancedFormat);
+
+//-------------------------------------------------------------------
 
 export function DataTable<TData, TValue>({
   columns,
@@ -43,13 +49,17 @@ export function DataTable<TData, TValue>({
   previousIcon = "Previous",
   nextIcon = "Next",
   showPageData = true,
+  currency = "usd",
+  setCurrency = () => {
+    console.warn("setCurrency function not provided");
+  },
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [modal, setModal] = useState<NewCoinType | null>(null);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data,
-    columns,
+    columns: columns(),
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -159,7 +169,12 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
       )}
-      <CoinModal open={modal} setOpen={setModal} />
+      <CoinModal
+        open={modal}
+        setOpen={setModal}
+        currency={currency}
+        setCurrency={setCurrency}
+      />
     </div>
   );
 }

@@ -1,25 +1,26 @@
+import fs from "fs";
+import path from "path";
 import winston from "winston";
+
 const { combine, timestamp, json } = winston.format;
+
+const logDir = path.resolve("logs");
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 
 export const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
   format: combine(timestamp(), json()),
   transports: [
     new winston.transports.File({
-      filename: "combined.log",
+      filename: path.join(logDir, "combined.log"),
     }),
     new winston.transports.File({
-      filename: "app-error.log",
+      filename: path.join(logDir, "app-error.log"),
       level: "error",
     }),
-    new winston.transports.Http({
-      host: process.env.HOST || "localhost",
-      port: parseInt(process.env.PORT || "0") || 5601,
-      auth: {
-        username: process.env.ELASTICSEARCH_USERNAME,
-        password: process.env.ELASTICSEARCH_PASSWORD,
-      },
-    }),
+    // You can still keep the HTTP transport commented for now
   ],
 });
 

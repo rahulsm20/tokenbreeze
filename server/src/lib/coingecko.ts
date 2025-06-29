@@ -1,7 +1,7 @@
+import { CMCResultType, DateRange } from "@/types";
+import { cacheData, retrieveCachedData } from "@/utils/redis";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import dayjs from "dayjs";
-import { CMCResultType, DateRange } from "../../types";
-import { cacheData, retrieveCachedData } from "../utils/redis";
 
 class CoingeckoInstance {
   private base_url: string;
@@ -15,17 +15,19 @@ class CoingeckoInstance {
       },
     });
   }
-  async getLatestListings() {
+  async getLatestListings(currency: string = "usd") {
     try {
-      const url = `${this.base_url}/v3/coins/markets?vs_currency=usd`;
-      const cacheKey = `cg:${dayjs().format("YYYY-MM-DD")}`;
+      const url = `${this.base_url}/v3/coins/markets?vs_currency=${currency}`;
+      const cacheKey = `cg:listings:${dayjs().format(
+        "YYYY-MM-DD"
+      )}:${currency}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
         return JSON.parse(cachedData);
       }
       const response = await this.api.get(url);
       const data = await response.data;
-      await cacheData(cacheKey, JSON.stringify(data));
+      await cacheData(cacheKey, JSON.stringify(data), "5 mins");
       return data as CMCResultType;
     } catch (err) {
       console.log(err);

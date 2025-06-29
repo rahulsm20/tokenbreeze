@@ -46,8 +46,8 @@ const fragments = {
 };
 
 export const DEX_AGGREGATOR = gql`
-  query DexAggregator {
-    dexAggregator {
+  query DexAggregator($currency: String!) {
+    dexAggregator(currency: $currency) {
       ...TokenInfo
     }
   }
