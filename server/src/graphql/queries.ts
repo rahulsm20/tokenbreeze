@@ -55,7 +55,7 @@ const fragments = {
 };
 
 export const DEX_AGGREGATOR = `
-  query DexAggregator(currency: String!) {
+  query DexAggregator($currency: String!) {
     dexAggregator(currency: $currency) {
       ...tokenInfo
     }

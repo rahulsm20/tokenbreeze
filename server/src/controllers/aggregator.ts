@@ -4,8 +4,6 @@ import { logger } from "@/logger";
 import { CMCResultType, DateRange } from "@/types";
 import { PROVIDERS } from "@/utils/constants";
 import { cacheData, retrieveCachedData } from "@/utils/redis";
-import { ethers } from "ethers";
-import { oneInchAggregator } from "./aggregators/oneinch";
 
 /**
  * Fetches historical data for a specific token from CoinGecko.
@@ -125,14 +123,14 @@ export const dexAggregator = async (
       });
     }
 
-    const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+    // const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
     const res = Array.from(result.values());
-    for (const r of res) {
-      const address = r.info?.platform?.token_address;
-      if (address && address != USDC && ethers.isAddress(address)) {
-        await oneInchAggregator(address, r);
-      }
-    }
+    // for (const r of res) {
+    //   const address = r.info?.platform?.token_address;
+    //   if (address && address != USDC && ethers.isAddress(address)) {
+    //     await oneInchAggregator(address, r);
+    //   }
+    // }
     return res;
 
     //     const price = ethers.formatUnits(

@@ -10,12 +10,9 @@ export const oneInchAggregator = async (address: string, r: any) => {
 
   if (cachedQuote) {
     const quote = JSON.parse(cachedQuote);
-    const price = ethers.formatUnits(
-      quote.toAmount || quote.toTokenAmount,
-      quote.toToken.decimals
-    );
+    const price = ethers.formatUnits(quote.toAmount, 6);
     r.providers.push(PROVIDERS.ONEINCH);
-    r.quotes.push({
+    r.results.push({
       provider: PROVIDERS.ONEINCH,
       price,
     });
@@ -28,14 +25,11 @@ export const oneInchAggregator = async (address: string, r: any) => {
     ethers.parseEther("1").toString()
   );
 
-  if (quote) {
+  if (quote && quote.toAmount) {
     await cacheData(cacheKey, JSON.stringify(quote), "5 mins");
-    const price = ethers.formatUnits(
-      quote.toAmount || quote.toTokenAmount,
-      quote.toToken.decimals
-    );
+    const price = ethers.formatUnits(quote.toAmount, 6);
     r.providers.push(PROVIDERS.ONEINCH);
-    r.quotes.push({
+    r.results.push({
       provider: PROVIDERS.ONEINCH,
       price,
     });

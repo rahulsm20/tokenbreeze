@@ -156,6 +156,9 @@ const QueryType = new GraphQLObjectType({
   name: "Query",
   fields: {
     dexAggregator: {
+      args: {
+        currency: { type: GraphQLString },
+      },
       type: new GraphQLList(TokenInfoType),
       resolve: dexAggregator,
     },
