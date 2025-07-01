@@ -1,0 +1,74 @@
+# This workflow deploys the server to Google Cloud Run
+# It requires the GCP_PROJECT_ID, GCP_SA_KEY, and GCP_REGION
+
+name: Server Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    strategy:
+      matrix:
+        node-version: [21.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install Dependencies
+        run: |
+          cd server
+          npm install
+
+      - name: Run tests
+        env:
+          REDIS_URL: ${{secrets.REDIS_URL}}
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+          DIRECT_URL: ${{secrets.DIRECT_URL}}
+          COIN_MARKET_CAP_API_KEY: ${{secrets.COIN_MARKET_CAP_API_KEY}}
+          COINGECKO_API_KEY: ${{secrets.COINGECKO_API_KEY}}
+          COINGECKO_ROOT_URL: ${{secrets.COINGECKO_ROOT_URL}}
+          NODE_ENV: ${{secrets.NODE_ENV}}
+        run: |
+          cd server
+          npm run test:unit
+
+      - name: Build
+        run: |
+          cd server
+          npm run build --if-present
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          cd server
+          gcloud run deploy tokenbreeze \
+              --source=. \
+              --platform=managed \
+              --region=${{ secrets.GCP_REGION }} \
+              --allow-unauthenticated
+
+      - name: Deploy server to Production
+        run: |
+          echo "Deploying to production..."
+          cd server
+          npm install --production
+          gcloud run deploy tokenbreeze --source=.
+                --platform=managed \
+                --region=${{ secrets.GCP_REGION }} \
+                --allow-unauthenticated
