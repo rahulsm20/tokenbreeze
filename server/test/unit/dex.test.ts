@@ -1,12 +1,9 @@
+import { DEX_AGGREGATOR, DEX_AGGREGATOR_SPECIFIC } from "@/graphql/queries";
+import { schema } from "@/graphql/typedefs";
 import assert from "assert";
+import { describe, it } from "bun:test";
 import dotenv from "dotenv";
 import { graphql } from "graphql";
-import { describe, it } from "mocha";
-import {
-  DEX_AGGREGATOR,
-  DEX_AGGREGATOR_SPECIFIC,
-} from "../../src/graphql/queries";
-import { schema } from "../../src/graphql/typedefs";
 dotenv.config();
 
 describe("listing test", () => {
@@ -15,6 +12,9 @@ describe("listing test", () => {
     const result = await graphql({
       schema,
       source: query,
+      variableValues: {
+        currency: "usd", // Default currency for the test
+      },
     });
     assert.equal(result.errors, undefined);
     assert.notEqual(result.data?.dexAggregator, undefined);
