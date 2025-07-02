@@ -37,22 +37,15 @@ export const cacheData = async (
   lifetime?: "5 mins" | "1 day" | "1 minute"
 ) => {
   await connectRedis();
-  if (lifetime != undefined) {
-    const cached = await redisClient.set(key, data, {
-      EX:
-        lifetime == "5 mins"
-          ? 60 * 5
-          : lifetime == "1 minute"
-          ? 60 * 1
-          : 60 * 60 * 24, // default to 1 day
-    });
-    return cached;
-  } else {
-    const cached = await redisClient.set(key, data, {
-      KEEPTTL: true,
-    });
-    return cached;
-  }
+  const cached = await redisClient.set(key, data, {
+    EX:
+      lifetime == "5 mins" || !lifetime
+        ? 60 * 5
+        : lifetime == "1 minute"
+        ? 60 * 1
+        : 60 * 60 * 24, // default to 1 day
+  });
+  return cached;
 };
 
 export const retrieveCachedData = async (key: string) => {
