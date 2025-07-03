@@ -10,9 +10,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import StockChart from "../charts/StockChart";
 import CurrencySelector from "../currency-selector";
+import ProviderCardList from "../data/ProviderCardList";
 import { OtherDetailsColumns } from "../data/table/columns";
 import { TimeRangeSelector } from "../time-range-selector";
-import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import {
   Dialog,
@@ -137,7 +137,7 @@ export const CoinModal = ({
       open={open ? true : false}
       onOpenChange={() => setOpen(open ? null : open)}
     >
-      <DialogContent className="items-center h-3/4 max-w-screen-sm md:max-w-screen-lg">
+      <DialogContent className="lg:mx-0 max-w-[calc(100%-5rem)] h-3/4 lg:max-w-screen-lg">
         <DialogHeader className="flex flex-col gap-1">
           <DialogTitle className="flex items-center gap-2">
             {open?.info.image && (
@@ -155,39 +155,7 @@ export const CoinModal = ({
             <CurrencySelector currency={currency} setCurrency={setCurrency} />
           </div>
           <section className="flex flex-col md:flex-row gap-2">
-            <div className="flex flex-col gap-5">
-              {open?.results.map((price) => {
-                const percentageChange =
-                  price.provider == "CoinMarketCap"
-                    ? price.percent_change_24h
-                    : price.price_change_percentage_24h;
-                return (
-                  <Card key={price.provider} className="p-3">
-                    <div className="flex flex-col">
-                      <CardHeader className="p-2">{price.provider}</CardHeader>
-                      <CardContent className="p-2">
-                        <CardDescription className="flex gap-2">
-                          <span className="m-0">
-                            {formatCurrency(price.price, currency)}
-                          </span>
-                          <div>
-                            {percentageChange > 0 ? (
-                              <Badge className="text-white bg-green-600 hover:bg-green-500">
-                                +{percentageChange}%
-                              </Badge>
-                            ) : (
-                              <Badge className="text-white bg-red-600 hover:bg-red-500">
-                                {percentageChange}%
-                              </Badge>
-                            )}
-                          </div>
-                        </CardDescription>
-                      </CardContent>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
+            <ProviderCardList open={open} currency={currency} />
             <StockChart
               loading={loading}
               data={data}
@@ -197,15 +165,15 @@ export const CoinModal = ({
             />
           </section>
         </DialogDescription>
-        <Card className="p-3 border-none hover:bg-inherit hover:shadow-none">
+        <Card className="p-3 border-none hover:bg-inherit hover:shadow-none max-w-[calc(100%-5rem)]">
           {open && open?.results.length > 0 && (
-            <div className="flex flex-col">
+            <div className="flex flex-col ">
               <CardHeader className="p-2 underline underline-offset-8">
                 Other details
               </CardHeader>
               <CardContent className="p-2">
                 <CardDescription className="flex gap-2 flex-col text-foreground">
-                  <Table>
+                  <Table className="overflow-auto">
                     <TableHeader className="text-start">
                       <TableRow>
                         {OtherDetailsColumns.map((column) => (

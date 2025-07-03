@@ -77,7 +77,7 @@ export function DataTable<TData, TValue>({
     },
   });
   return (
-    <div className="text-start w-full">
+    <div className="text-start">
       <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Search"
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="text-xs">
         <Table className="overflow-x-scroll">
-          <TableHeader>
+          <TableHeader className="max-w-32">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -122,7 +122,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className=" text-start">
+                    <TableCell key={cell.id} className="text-start max-w-44">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

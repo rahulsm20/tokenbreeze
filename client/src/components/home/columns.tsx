@@ -2,6 +2,7 @@ import { CoinType, NewCoinType } from "@/types";
 import { formatCurrency } from "@/utils";
 import { PROVIDERS } from "@/utils/constants";
 import { ColumnDef } from "@tanstack/react-table";
+import SparklineChart from "../charts/SparklineChart";
 import PriceChangeBadge from "./price-change-badge";
 
 export const coinColumns: ColumnDef<CoinType>[] = [
@@ -79,6 +80,38 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       ),
     },
     {
+      accessorKey: "chart",
+      header: "Chart",
+      cell: (info) => {
+        const percentageChange =
+          info.cell.row.original.info.price_change_percentage_24h ||
+          info.cell.row.original.results?.[0]?.percent_change_24h;
+        const currentPrice = info.cell.row.original.results.find(
+          (r) => r.provider === PROVIDERS.COINGECKO
+        )?.price
+          ? info.cell.row.original.results.find(
+              (r) => r.provider === PROVIDERS.COINGECKO
+            )?.price || 0
+          : 0;
+        const previousPrice =
+          currentPrice && percentageChange
+            ? currentPrice - (percentageChange / 100) * currentPrice
+            : 0;
+        console.log({
+          token: info.cell.row.original.info.symbol,
+          currentPrice,
+          previousPrice,
+          percentageChange,
+        });
+        return (
+          <SparklineChart
+            data={[previousPrice, currentPrice]}
+            color={previousPrice < currentPrice ? "green" : "red"}
+          />
+        );
+      },
+    },
+    {
       accessorKey: "cmc",
       header: "CoinMarketCap",
       cell: (info) => (
@@ -114,24 +147,24 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
         </div>
       ),
     },
-    {
-      accessorKey: "1inch",
-      header: "1inch",
-      cell: (info) => (
-        <div className="text-xs sm:text-base">
-          {info.cell.row.original.results.find(
-            (r) => r.provider === PROVIDERS.ONEINCH
-          )?.price
-            ? formatCurrency(
-                info.cell.row.original.results.find(
-                  (r) => r.provider === PROVIDERS.ONEINCH
-                )?.price || 0,
-                currency
-              )
-            : "-"}
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: "1inch",
+    //   header: "1inch",
+    //   cell: (info) => (
+    //     <div className="text-xs sm:text-base">
+    //       {info.cell.row.original.results.find(
+    //         (r) => r.provider === PROVIDERS.ONEINCH
+    //       )?.price
+    //         ? formatCurrency(
+    //             info.cell.row.original.results.find(
+    //               (r) => r.provider === PROVIDERS.ONEINCH
+    //             )?.price || 0,
+    //             currency
+    //           )
+    //         : "-"}
+    //     </div>
+    //   ),
+    // },
     {
       accessorKey: "percent_change_24h",
       header: "24h Change",

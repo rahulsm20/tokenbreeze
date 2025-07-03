@@ -68,29 +68,33 @@ const Home = () => {
   return (
     <Layout>
       <div className="p-10 flex flex-col gap-3">
-        <h1 className="flex text-lg sm:text-xl items-center gap-2">
-          <span>Aggregated Cryptocurrency Prices</span>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent className="bg-background border text-foreground">
-                {tooltipData}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Button
-            className="ml-auto"
-            variant="outline"
-            onClick={handleRefetch}
-            disabled={isRefetching || loadingData}
-          >
-            <RefreshCcw
-              className={isRefetching ? "animate-spin text-primary" : ""}
-            />
-          </Button>
-          <CurrencySelector currency={currency} setCurrency={setCurrency} />
+        <h1 className="flex text-lg lg:text-xl items-center justify-between gap-2 flex-col md:flex-row">
+          <p className="flex items-center gap-2">
+            <span>Aggregated Cryptocurrency Prices</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-4 w-4 text-gray-400" />
+                </TooltipTrigger>
+                <TooltipContent className="bg-background border text-foreground">
+                  {tooltipData}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              className="ml-auto"
+              variant="outline"
+              onClick={handleRefetch}
+              disabled={isRefetching || loadingData}
+            >
+              <RefreshCcw
+                className={isRefetching ? "animate-spin text-primary" : ""}
+              />
+            </Button>
+            <CurrencySelector currency={currency} setCurrency={setCurrency} />
+          </div>
         </h1>
         {loadingData ? (
           <Ellipsis className="animate-pulse" />

@@ -100,7 +100,7 @@ const StockChart = ({
 }: StockChartPropsType) => {
   return (
     <ResponsiveContainer
-      width="80%"
+      width="100%"
       height={500}
       className="flex items-center justify-center"
     >
