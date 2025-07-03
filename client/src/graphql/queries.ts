@@ -34,10 +34,6 @@ const fragments = {
         total_supply
         market_cap
         total_volume
-        historicalData {
-          date
-          price
-        }
       }
     }
   `,
