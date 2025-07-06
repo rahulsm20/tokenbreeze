@@ -51,17 +51,17 @@ const Home = () => {
     }
   };
 
-  const isPresent =
-    dexData &&
-    dexData.dexAggregator &&
-    dexData.dexAggregator.length > 0 &&
-    dexData.dexAggregator.some(
-      (item: { providers: { name: string }[] }) =>
-        item.providers &&
-        item.providers.some(
-          (provider: { name: string }) => provider.name === "1inch"
-        )
-    );
+  // const isPresent =
+  //   dexData &&
+  //   dexData.dexAggregator &&
+  //   dexData.dexAggregator.length > 0 &&
+  //   dexData.dexAggregator.some(
+  //     (item: { providers: { name: string }[] }) =>
+  //       item.providers &&
+  //       item.providers.some(
+  //         (provider: { name: string }) => provider.name === "1inch"
+  //       )
+  //   );
 
   return (
     <Layout>
