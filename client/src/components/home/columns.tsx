@@ -80,35 +80,26 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       ),
     },
     {
-      accessorKey: "chart",
-      header: "Chart",
+      accessorKey: "preview",
+      header: "Preview Chart",
       cell: (info) => {
-        const percentageChange =
-          info.cell.row.original.info.price_change_percentage_24h ||
-          info.cell.row.original.results?.[0]?.percent_change_24h;
-        const currentPrice = info.cell.row.original.results.find(
-          (r) => r.provider === PROVIDERS.COINGECKO
-        )?.price
-          ? info.cell.row.original.results.find(
-              (r) => r.provider === PROVIDERS.COINGECKO
-            )?.price || 0
-          : 0;
-        const previousPrice =
-          currentPrice && percentageChange
-            ? currentPrice - (percentageChange / 100) * currentPrice
-            : 0;
-        console.log({
-          token: info.cell.row.original.info.symbol,
-          currentPrice,
-          previousPrice,
-          percentageChange,
-        });
-        return (
-          <SparklineChart
-            data={[previousPrice, currentPrice]}
-            color={previousPrice < currentPrice ? "green" : "red"}
-          />
+        const data = info.cell.row.original.results.find(
+          ({ provider }) => provider === PROVIDERS.COINGECKO
         );
+        const change =
+          info.cell.row.original.info.price_change_percentage_7d ||
+          info.cell.row.original.results?.[0]?.percent_change_7d;
+
+        if (data && data.sparkline_in_7d) {
+          return (
+            <SparklineChart
+              data={data.sparkline_in_7d || []}
+              color={change > 0 ? "green" : "red"}
+            />
+          );
+        } else {
+          return "-";
+        }
       },
     },
     {
@@ -166,16 +157,14 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
     //   ),
     // },
     {
-      accessorKey: "percent_change_24h",
-      header: "24h Change",
-      cell: (info) => (
-        <PriceChangeBadge
-          percentageChange={
-            info.cell.row.original.info.price_change_percentage_24h ||
-            info.cell.row.original.results?.[0]?.percent_change_24h
-          }
-        />
-      ),
+      accessorKey: "percent_change_7d",
+      header: "7d Change",
+      cell: (info) => {
+        const change =
+          info.cell.row.original.info.price_change_percentage_7d ||
+          info.cell.row.original.results?.[0]?.percent_change_7d;
+        return <PriceChangeBadge percentageChange={change} />;
+      },
     },
   ];
 };

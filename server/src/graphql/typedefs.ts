@@ -47,10 +47,14 @@ export const typeDefs = `#graphql
     total_supply: Float
     market_cap: Float
     total_volume: Float
+    sparkline_in_7d: [Float]
   }
   
   type Quote {
     USD: QuoteDetails
+    GBP: QuoteDetails
+    EUR: QuoteDetails
+    INR: QuoteDetails
   }
 
   type QuoteDetails {
@@ -72,7 +76,12 @@ export const typeDefs = `#graphql
       image: String
       price_change_24h: Float
       quote: Quote
-    }
+  }
+
+  type HistoricalChartDataPreview {
+    date: Float
+    price: Float
+  }
 `;
 
 const DateRangeType = new GraphQLEnumType({
@@ -105,6 +114,9 @@ const TokenResultType = new GraphQLObjectType({
     total_supply: { type: GraphQLFloat },
     market_cap: { type: GraphQLFloat },
     total_volume: { type: GraphQLFloat },
+    sparkline_in_7d: {
+      type: new GraphQLList(GraphQLFloat),
+    },
   },
 });
 
@@ -180,6 +192,14 @@ const QueryType = new GraphQLObjectType({
       },
       resolve: quote,
     },
+  },
+});
+
+const HistoricalChartDataPreview = new GraphQLObjectType({
+  name: "HistoricalChartDataPreview",
+  fields: {
+    date: { type: GraphQLFloat },
+    price: { type: GraphQLFloat },
   },
 });
 

@@ -71,17 +71,20 @@ export const CoinModal = ({
   setCurrency = () => {},
   open,
   setOpen,
+  timeRange = "24h",
+  setTimeRange = () => {},
 }: {
   open: NewCoinType | null;
   setOpen: (open: NewCoinType | null) => void;
   currency: string;
   setCurrency: (currency: string) => void;
+  timeRange?: string;
+  setTimeRange?: (timeRange: string) => void;
 }) => {
   const [fetchChartData, { loading, data, error }] = useLazyQuery(
     DEX_AGGREGATOR_SPECIFIC
   );
   const [retried, setRetried] = useState(0);
-  const [timeRange, setTimeRange] = useState("24h");
   useEffect(() => {
     if (open?.info.id) {
       fetchChartData({

@@ -21,7 +21,7 @@ import {
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat"; // ES 2015
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CoinModal } from "../modal/coin-modal";
 import { Input } from "../ui/input";
 
@@ -36,6 +36,8 @@ interface DataTableProps<TData, TValue> {
   showPageData?: boolean;
   currency?: string;
   setCurrency?: (currency: string) => void;
+  timeRange?: string;
+  setTimeRange?: (timeRange: string) => void;
 }
 
 dayjs.extend(advancedFormat);
@@ -76,6 +78,17 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const [timeRange, setTimeRange] = useState("7d");
+  useEffect(() => {
+    if (modal) {
+      const newRow = table.getRowModel().rows.find((row) => {
+        const updatedRow = row.original as NewCoinType;
+        return updatedRow.info.id === modal.info.id;
+      });
+      setModal(newRow?.original as NewCoinType);
+    }
+  }, [currency, timeRange]);
   return (
     <div className="text-start">
       <div className="flex items-center py-4 justify-between">
@@ -174,6 +187,8 @@ export function DataTable<TData, TValue>({
         setOpen={setModal}
         currency={currency}
         setCurrency={setCurrency}
+        timeRange={timeRange}
+        setTimeRange={setTimeRange}
       />
     </div>
   );

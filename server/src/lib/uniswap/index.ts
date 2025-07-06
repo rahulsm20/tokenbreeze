@@ -1,8 +1,12 @@
+//-----------------------------------------------------------
+
 import { ethProvider } from "@/lib/eth";
 import { logger } from "@/logger";
 import UniswapV3Quote from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import { FeeAmount } from "@uniswap/v3-sdk";
 import { ethers } from "ethers";
+
+//-----------------------------------------------------------
 
 const FEE_TIERS = [
   FeeAmount.LOWEST,
@@ -13,6 +17,8 @@ const FEE_TIERS = [
   FeeAmount.MEDIUM,
   FeeAmount.HIGH,
 ];
+
+//-----------------------------------------------------------
 
 export const getQuoteFromUniswap = async (tokenA: {
   id: string;

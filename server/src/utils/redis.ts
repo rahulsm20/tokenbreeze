@@ -1,10 +1,15 @@
+import { config } from "@/config";
 import dotenv from "dotenv";
 import { createClient } from "redis";
 dotenv.config();
 
+//-----------------------------------------------------------
+
 export const redisClient = createClient({
-  url: process.env.REDIS_URL,
+  url: config.REDIS_URL,
 });
+
+//-----------------------------------------------------------
 
 redisClient.on("connect", () => console.log("Connected to Redis"));
 redisClient.on("disconnect", () => console.log("Disconnected from Redis"));
@@ -24,6 +29,8 @@ export const disconnectRedis = async () => {
   }
 };
 
+//-----------------------------------------------------------
+
 /**
  * Function to cache data in Redis
  * @param key
@@ -38,15 +45,18 @@ export const cacheData = async (
 ) => {
   await connectRedis();
   const cached = await redisClient.set(key, data, {
-    EX:
-      lifetime == "5 mins" || !lifetime
-        ? 60 * 5
-        : lifetime == "1 minute"
-        ? 60 * 1
-        : 60 * 60 * 24, // default to 1 day
+    EX: !lifetime
+      ? 60 * 10 // Default to 10 minutes
+      : lifetime == "5 mins"
+      ? 60 * 5
+      : lifetime == "1 minute"
+      ? 60 * 1
+      : 60 * 60 * 24,
   });
   return cached;
 };
+
+//-----------------------------------------------------------
 
 export const retrieveCachedData = async (key: string) => {
   await connectRedis();

@@ -43,6 +43,7 @@ const fragments = {
         total_supply
         market_cap
         total_volume
+        sparkline_in_7d
       }
     }
   `,

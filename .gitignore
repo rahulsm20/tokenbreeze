@@ -6,3 +6,8 @@
 **/*.so
 **/*.dylib
 **/*.o
+
+**/*/dist
+**/*/build
+**/*/out
+**/*/bin

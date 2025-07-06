@@ -1,4 +1,4 @@
 #!/bin/bash
-cd ./server && npm run dev &
-cd ./client && npm run dev &
+cd ./server && bun dev &
+cd ./client && bun dev &
 wait

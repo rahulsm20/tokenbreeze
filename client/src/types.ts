@@ -21,7 +21,7 @@ export type NewCoinType = {
     symbol: string;
     price: number;
     current_price: number;
-    price_change_percentage_24h: number;
+    price_change_percentage_7d: number;
     image: string;
     // price_change_1h: number;
     // price_change_7d: number;
@@ -32,9 +32,11 @@ export type NewCoinType = {
     price: number;
     percent_change_24h: number;
     price_change_percentage_24h: number;
+    percent_change_7d: number;
     total_supply: number;
     market_cap: number;
     total_volume: number;
+    sparkline_in_7d?: number[];
   }[];
 };
 

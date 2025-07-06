@@ -74,7 +74,7 @@ const CustomizedTooltip: React.FC<CustomizedTooltipProps> = ({
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-transparent backdrop-blur-sm border p-2 rounded-md flex flex-col justify-between">
+      <div className="bg-transparent backdrop-blur-xl border p-2 rounded-md flex flex-col justify-between">
         <p className="flex gap-2">
           <span>{`${dayjs(payload[0]?.payload.date).format(
             "MMM Do YYYY"
@@ -135,7 +135,7 @@ const StockChart = ({
             stroke={hasPriceIncreased ? COLORS.GREEN : COLORS.RED}
             fill={COLORS.GREEN}
           />
-          <CartesianGrid strokeDasharray="4 1 2" />
+          <CartesianGrid strokeDasharray="4 1 2" color={COLORS.GRAY} />
         </LineChart>
       ) : (
         <div className="flex items-center justify-center h-full w-full">

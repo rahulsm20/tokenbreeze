@@ -19,7 +19,7 @@ const PriceChangeBadge = ({
             : "text-red-500 px-2 py-1"
         }
       >
-        {percentageChange}%
+        {percentageChange.toFixed(4)}%
       </span>
     </div>
   );

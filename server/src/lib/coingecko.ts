@@ -1,7 +1,12 @@
+//-----------------------------------------------------------
+
 import { CMCResultType, DateRange } from "@/types";
 import { cacheData, retrieveCachedData } from "@/utils/redis";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import dayjs from "dayjs";
+import { logger } from "../logger";
+
+//-----------------------------------------------------------
 
 class CoingeckoInstance {
   private base_url: string;
@@ -17,7 +22,7 @@ class CoingeckoInstance {
   }
   async getLatestListings(currency: string = "usd") {
     try {
-      const url = `${this.base_url}/v3/coins/markets?vs_currency=${currency}`;
+      const url = `${this.base_url}/v3/coins/markets?vs_currency=${currency}&sparkline=true`;
       const cacheKey = `cg:listings:${dayjs().format(
         "YYYY-MM-DD"
       )}:${currency}`;
@@ -60,18 +65,38 @@ class CoingeckoInstance {
           break;
       }
       const url = `${this.base_url}/v3/coins/${symbol}/market_chart/range?vs_currency=${currency}&from=${from}&to=${to}`;
-      const cacheKey = `cg:historical:${symbol}:${from}:${to}`;
+      const cacheKey = `cg:historical:${symbol}:${from}:${to}:${currency}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
-        return JSON.parse(cachedData);
+        let data = JSON.parse(cachedData);
+
+        // Convert date strings back to Date objects
+        data = data.map((item: any) => ({
+          ...item,
+          date: new Date(item.date),
+        }));
+        return data;
       }
+
       const response = await this.api.get(url, { params: { symbol } });
       const data = await response.data;
-      await cacheData(cacheKey, JSON.stringify(data));
+      if (!data || data.length === 0) {
+        logger.warn("No historical data found for", {
+          symbol,
+          dateRange,
+          currency,
+        });
+        return null;
+      } else {
+        await cacheData(cacheKey, JSON.stringify(data));
+      }
       return data;
     } catch (err) {
       if (err instanceof AxiosError) {
         console.log("Error in getHistoricalData", err.response?.data);
+        logger.error("Error in getHistoricalData", {
+          message: err.message,
+        });
       }
       return err;
     }
@@ -82,7 +107,7 @@ class CoingeckoInstance {
       const cacheKey = `cg:coin:${symbol}:${dayjs().format("YYYY-MM-DD")}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
-        return JSON.parse(cachedData);
+        return { ...JSON.parse(cachedData), fromCache: true };
       }
       const response = await this.api.get(url);
       const data = await response.data;

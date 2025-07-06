@@ -63,8 +63,6 @@ const Home = () => {
         )
     );
 
-  console.log({ isPresent });
-
   return (
     <Layout>
       <div className="p-10 flex flex-col gap-3">

@@ -1,8 +1,11 @@
+//-----------------------------------------------------------
+
 import { CMCResultType } from "@/types";
 import { cacheData, retrieveCachedData } from "@/utils/redis";
 import axios, { AxiosInstance } from "axios";
 import dayjs from "dayjs";
-// console.log("key: ", process.env.COIN_MARKET_CAP_API_KEY);
+
+//-----------------------------------------------------------
 class CoinMarketCapInstance {
   private base_url: string;
   private api: AxiosInstance;

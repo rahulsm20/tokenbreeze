@@ -3,7 +3,6 @@ import { coingeckoClient } from "@/lib/coingecko";
 import { logger } from "@/logger";
 import { CMCResultType, DateRange } from "@/types";
 import { PROVIDERS } from "@/utils/constants";
-import { cacheData, retrieveCachedData } from "@/utils/redis";
 
 /**
  * Fetches historical data for a specific token from CoinGecko.
@@ -23,18 +22,6 @@ export const dexAggregatorSpecific = async (
     if (!symbol) {
       throw new Error("Please provide a valid symbol");
     }
-    const key = `historical_data:${symbol}:${dateRange}:${currency}`;
-    const cachedData = await retrieveCachedData(key);
-    if (cachedData) {
-      let data = JSON.parse(cachedData);
-
-      // Convert date strings back to Date objects
-      data = data.map((item: any) => ({
-        ...item,
-        date: new Date(item.date),
-      }));
-      return data;
-    }
     const listings = await coingeckoClient.getHistoricalData(
       symbol,
       dateRange,
@@ -49,8 +36,6 @@ export const dexAggregatorSpecific = async (
       });
     }
 
-    await cacheData(key, JSON.stringify(res));
-
     return res;
   } catch (err) {
     console.log(err);
@@ -62,12 +47,10 @@ export const dexAggregatorSpecific = async (
 /**
  * Fetches the latest listings from CoinMarketCap and CoinGecko, and combines them with Uniswap data.
  */
-export const dexAggregator = async (
+export async function dexAggregator(
   _: any,
-  { currency }: { currency: string } = {
-    currency: "usd",
-  }
-) => {
+  { currency = "usd" }: { currency: string }
+) {
   try {
     const cmcListings = (await cmcClient.getLatestListings(
       currency
@@ -99,7 +82,10 @@ export const dexAggregator = async (
     }
 
     const cgData = await coingeckoClient.getLatestListings(currency);
-
+    if (!cgData || cgData.length === 0) {
+      logger.warn("No data found from CoinGecko");
+      return Array.from(result.values());
+    }
     for (const listing of cgData) {
       const symbol = listing.symbol.toUpperCase();
       const existing = result.get(symbol) || [];
@@ -117,6 +103,7 @@ export const dexAggregator = async (
             total_supply: listing.total_supply,
             total_volume: listing.total_volume,
             price_change_percentage_24h: listing.price_change_percentage_24h,
+            sparkline_in_7d: listing.sparkline_in_7d.price || [],
           },
         ],
         providers: [...(existing?.providers || []), PROVIDERS.COINGECKO],
@@ -167,7 +154,7 @@ export const dexAggregator = async (
     //   }
     // }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return { err };
   }
-};
+}

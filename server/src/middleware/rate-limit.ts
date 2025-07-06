@@ -1,3 +1,4 @@
+import { config } from "@/config";
 import { cacheData, retrieveCachedData } from "@/utils/redis";
 import { NextFunction, Request, Response } from "express";
 import ip from "ip";
@@ -7,6 +8,9 @@ export const rateLimiter = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (req.headers["x-internal-job"] == config.ENCRYPTION_KEY) {
+    return next();
+  }
   const address = ip.address();
   const cacheKey = `ip:${address}`;
   const data = await retrieveCachedData(cacheKey);
