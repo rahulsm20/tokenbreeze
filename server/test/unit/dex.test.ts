@@ -36,6 +36,7 @@ describe("specific coin historical data test", () => {
       schema,
       source: query,
       variableValues: {
+        id: "BTC",
         symbol: "bitcoin",
         currency: "usd",
       },
