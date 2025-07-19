@@ -57,17 +57,21 @@ export const DEX_AGGREGATOR = gql`
 
 export const DEX_AGGREGATOR_SPECIFIC = gql`
   query DexAggregatorSpecific(
+    $id: String!
     $symbol: String!
     $dateRange: DateRange
     $currency: String!
   ) {
     dexAggregatorSpecific(
+      id: $id
       symbol: $symbol
       dateRange: $dateRange
       currency: $currency
     ) {
       date
       CoinGecko
+      Coinbase
+      Binance
     }
   }
 `;
@@ -88,4 +92,13 @@ export const SWAP_QUOTE = gql`
       price
     }
   }
+`;
+
+export const SEARCH_AGGREGATOR = gql`
+  query SearchAggregator($query: String!, $currency: String, $page: Int) {
+    searchDexAggregator(query: $query, currency: $currency, page: $page) {
+      ...TokenInfo
+    }
+  }
+  ${fragments.tokenInfo}
 `;

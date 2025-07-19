@@ -5,6 +5,9 @@ const PriceChangeBadge = ({
 }: {
   percentageChange: number;
 }) => {
+  if (!percentageChange) {
+    return "-";
+  }
   return (
     <div className="flex gap-1 items-center text-xs sm:text-base">
       {percentageChange > 0 ? (

@@ -1,6 +1,10 @@
 //--------------------------------------------
 
-import { dexAggregator, dexAggregatorSpecific } from "@/controllers/aggregator";
+import {
+  dexAggregator,
+  dexAggregatorSpecific,
+  searchDexAggregator,
+} from "@/controllers/aggregator";
 import { quote } from "@/controllers/web3";
 
 //--------------------------------------------
@@ -9,6 +13,7 @@ export const queries = {
   dexAggregator,
   dexAggregatorSpecific,
   quote,
+  searchDexAggregator,
 };
 
 const fragments = {
@@ -65,10 +70,12 @@ export const DEX_AGGREGATOR = `
 `;
 
 export const DEX_AGGREGATOR_SPECIFIC = `
-  query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange, $currency: String!) {
-    dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange, currency: $currency) {
+  query DexAggregatorSpecific($id:String!, $symbol: String!, $dateRange: DateRange, $currency: String!) {
+    dexAggregatorSpecific(id: $id, symbol: $symbol, dateRange: $dateRange, currency: $currency) {
       date
       CoinGecko
+      Coinbase
+      Binance
     }
   }
 `;
@@ -79,4 +86,13 @@ export const SWAP_QUOTE = `
       price
     }
   }
+`;
+
+export const SEARCH_AGGREGATOR = `
+  query SearchAggregator($query: String!, $currency: String, $page: Int) {
+    searchDexAggregator(query: $query, currency: $currency, page: $page) {
+      ...tokenInfo
+    }
+  }
+  ${fragments.tokenInfo}
 `;

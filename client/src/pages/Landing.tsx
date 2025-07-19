@@ -93,7 +93,7 @@ const Landing = () => {
         </h1>
         <p className="text-lg">Just another token price aggregator.</p>
         <Link to="/prices" className="flex items-center gap-1">
-          <Button className="text-white">
+          <Button className="text-white bg-green-600 hover:bg-green-700 transition-colors duration-300">
             Start Exploring <ArrowRight className="inline h-4 w-4" />
           </Button>
         </Link>

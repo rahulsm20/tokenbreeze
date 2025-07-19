@@ -80,6 +80,7 @@ export function DataTable<TData, TValue>({
   });
 
   const [timeRange, setTimeRange] = useState("7d");
+
   useEffect(() => {
     if (modal) {
       const newRow = table.getRowModel().rows.find((row) => {
@@ -89,34 +90,41 @@ export function DataTable<TData, TValue>({
       setModal(newRow?.original as NewCoinType);
     }
   }, [currency, timeRange]);
+
   return (
     <div className="text-start">
-      <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder="Search"
-          value={
-            (table.getColumn("info.name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) => {
-            table.getColumn("info.name")?.setFilterValue(event.target.value);
-          }}
-          className="max-w-sm"
-        />
-      </div>
       <div className="text-xs">
-        <Table className="overflow-x-scroll">
+        <Table className="overflow-x-scroll text-xs">
           <TableHeader className="max-w-32">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className="text-start">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      <div className="flex items-center py-4 justify-between gap-2">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        {header.id == "info.name" && (
+                          <Input
+                            placeholder="🔍"
+                            value={
+                              (table
+                                .getColumn("info.name")
+                                ?.getFilterValue() as string) ?? ""
+                            }
+                            onChange={(event) => {
+                              table
+                                .getColumn("info.name")
+                                ?.setFilterValue(event.target.value);
+                            }}
+                            className="w-32"
+                          />
+                        )}
+                      </div>
                     </TableHead>
                   );
                 })}
@@ -135,7 +143,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-start max-w-44">
+                    <TableCell key={cell.id} className="text-start">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -166,12 +174,14 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               size="sm"
+              title="Previous Page"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               {previousIcon}
             </Button>
             <Button
+              title="Next Page"
               variant="outline"
               size="sm"
               onClick={() => table.nextPage()}

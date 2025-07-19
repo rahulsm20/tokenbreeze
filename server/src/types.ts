@@ -68,3 +68,8 @@ export enum DateRange {
   twenty_four_hours = "twenty_four_hours",
   thirty_days = "thirty_days",
 }
+
+export type DexAggregatorSpecificType = {
+  date: number;
+  [key: string]: number;
+};

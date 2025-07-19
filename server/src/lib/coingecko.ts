@@ -20,12 +20,22 @@ class CoingeckoInstance {
       },
     });
   }
-  async getLatestListings(currency: string = "usd") {
+  async getLatestListings(
+    currency: string = "usd",
+    page: number = 1,
+    limit: number = 10,
+    coins?: string[]
+  ) {
     try {
-      const url = `${this.base_url}/v3/coins/markets?vs_currency=${currency}&sparkline=true`;
-      const cacheKey = `cg:listings:${dayjs().format(
+      const url =
+        `${this.base_url}/v3/coins/markets?vs_currency=${currency}&sparkline=true&page=${page}&per_page=${limit}` +
+        (coins ? `&ids=${coins.join(",")}` : "");
+      let cacheKey = `cg:listings:${dayjs().format(
         "YYYY-MM-DD"
-      )}:${currency}`;
+      )}:${currency}:${page}:${limit}`;
+      if (coins) {
+        cacheKey += `:${coins.join(",")}`;
+      }
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
         return JSON.parse(cachedData);
@@ -93,7 +103,7 @@ class CoingeckoInstance {
       return data;
     } catch (err) {
       if (err instanceof AxiosError) {
-        console.log("Error in getHistoricalData", err.response?.data);
+        console.log("Error in getHistoricalData", err.response?.data, symbol);
         logger.error("Error in getHistoricalData", {
           message: err.message,
         });
@@ -103,7 +113,7 @@ class CoingeckoInstance {
   }
   async getCoinData(symbol: string) {
     try {
-      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`;
+      const url = `${this.base_url}/v3/simple/price?ids=${symbol}&vs_currencies=usd`;
       const cacheKey = `cg:coin:${symbol}:${dayjs().format("YYYY-MM-DD")}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
@@ -116,6 +126,25 @@ class CoingeckoInstance {
     } catch (err) {
       return err;
     }
+  }
+  async searchListings(
+    query: string,
+    currency: string = "usd",
+    page: number = 1
+  ) {
+    const url = `${this.base_url}/v3/search`;
+    const cacheKey = `cg:search:${query}:${currency}:${page}`;
+    console.log({ cacheKey });
+    const cachedData = await retrieveCachedData(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+    const response = await this.api.get(url, {
+      params: { query, currency, page },
+    });
+    const data = await response.data;
+    await cacheData(cacheKey, JSON.stringify(data), "5 mins");
+    return data;
   }
 }
 

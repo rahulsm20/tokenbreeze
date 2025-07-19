@@ -13,10 +13,12 @@ export const options = {
 };
 
 const DEX_AGGREGATOR_SPECIFIC = `
-  query DexAggregatorSpecific($symbol: String!, $dateRange: DateRange, $currency: String!) {
-    dexAggregatorSpecific(symbol: $symbol, dateRange: $dateRange, currency: $currency) {
+  query DexAggregatorSpecific($id:String!,$symbol: String!, $dateRange: DateRange, $currency: String!) {
+    dexAggregatorSpecific(id: $id, symbol: $symbol, dateRange: $dateRange, currency: $currency) {
       date
       CoinGecko
+      Coinbase
+      Binance
     }
   }
 `;
@@ -30,7 +32,8 @@ export default function () {
       query: DEX_AGGREGATOR_SPECIFIC,
       operationName: "DexAggregatorSpecific",
       variables: {
-        symbol: "tether",
+        id: "tether",
+        symbol: "USDT",
       },
     }),
     {

@@ -93,3 +93,18 @@
   max-width: 1280px;
   margin: 0 auto;
 }
+
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--foreground));
+  border: 1px solid transparent;
+  border-radius: 2rem;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #cbcaca;
+}

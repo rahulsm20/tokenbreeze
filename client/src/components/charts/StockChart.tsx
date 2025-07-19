@@ -1,3 +1,5 @@
+//-----------------------------------------------------------------------
+
 import { StockChartPropsType } from "@/types";
 import { formatCurrency } from "@/utils";
 import { COLORS } from "@/utils/constants";
@@ -20,6 +22,8 @@ import {
 } from "recharts/types/component/DefaultTooltipContent";
 import { ContentType } from "recharts/types/component/Tooltip";
 
+//-----------------------------------------------------------------------
+
 /**
  * XAxisTickFormatter function formats the x-axis ticks based on the time range.
  * It uses the dayjs library to format the date and time.
@@ -40,6 +44,8 @@ const XAxisTickFormatter = (value: number, timeRange: string) => {
   return dayjs(value).format("MMM D");
 };
 
+//-----------------------------------------------------------------------
+
 /**
  * YAxisTickFormatter function formats the y-axis ticks based on the currency.
  * It uses the formatCurrency utility function to format the value.
@@ -48,6 +54,9 @@ const XAxisTickFormatter = (value: number, timeRange: string) => {
  * @returns
  */
 const YAxisTickFormatter = (value: number, currency: string) => {
+  if (!value || isNaN(value)) {
+    return "";
+  }
   if (value > 1000) {
     return `${formatCurrency(
       parseFloat((value / 1000).toFixed(2)),
@@ -81,9 +90,15 @@ const CustomizedTooltip: React.FC<CustomizedTooltipProps> = ({
           )}`}</span>
           <span>{`${dayjs(payload[0]?.payload.date).format("hh:mm a")}`}</span>
         </p>
-        <span className="flex">
-          CoinGecko: {formatCurrency(payload[0]?.payload.CoinGecko, currency)}
-        </span>
+        {payload.map((item) => (
+          <span className="flex" key={item.dataKey}>
+            {item.dataKey}:{" "}
+            {formatCurrency(
+              item.payload[item.dataKey || "Coinbase"] || 0,
+              currency
+            )}
+          </span>
+        ))}
       </div>
     );
   }
@@ -91,12 +106,13 @@ const CustomizedTooltip: React.FC<CustomizedTooltipProps> = ({
   return <></>;
 };
 
+//-----------------------------------------------------------------------
+
 const StockChart = ({
   loading,
   data,
   timeRange,
   currency,
-  hasPriceIncreased,
 }: StockChartPropsType) => {
   return (
     <ResponsiveContainer
@@ -132,10 +148,21 @@ const StockChart = ({
             dot={false}
             type="monotone"
             dataKey="CoinGecko"
-            stroke={hasPriceIncreased ? COLORS.GREEN : COLORS.RED}
-            fill={COLORS.GREEN}
+            stroke={COLORS.GREEN}
           />
-          <CartesianGrid strokeDasharray="4 1 2" color={COLORS.GRAY} />
+          <Line
+            dot={false}
+            type="monotone"
+            dataKey="Coinbase"
+            stroke={COLORS.BLUE}
+          />
+          <Line
+            dot={false}
+            type="monotone"
+            dataKey="Binance"
+            stroke={COLORS.YELLOW}
+          />
+          <CartesianGrid strokeDasharray="4 4" color={COLORS.GRAY} />
         </LineChart>
       ) : (
         <div className="flex items-center justify-center h-full w-full">
@@ -147,3 +174,5 @@ const StockChart = ({
 };
 
 export default StockChart;
+
+//-----------------------------------------------------------------------

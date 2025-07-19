@@ -1,4 +1,8 @@
-import { dexAggregator, dexAggregatorSpecific } from "@/controllers/aggregator";
+import {
+  dexAggregator,
+  dexAggregatorSpecific,
+  searchDexAggregator,
+} from "@/controllers/aggregator";
 import { quote } from "@/controllers/web3";
 import {
   GraphQLEnumType,
@@ -22,13 +26,16 @@ export const typeDefs = `#graphql
 
   type Query {
     dexAggregator(currency: String!): [TokenInfo]
-    dexAggregatorSpecific (symbol: String!, dateRange: DateRange, currency: String!):[TokenResponse]
+    dexAggregatorSpecific (id: String!,symbol: String!, dateRange: DateRange, currency: String!):[TokenResponse]
     quote (tokenOne: String, tokenTwo: String, tokenOneAmount: String, address: String): QuoteDetails
+    searchDexAggregator(query: String!, currency: String, page: Int): [TokenInfo]
   }
 
   type TokenResponse {
       date: Float
       CoinGecko: Float
+      Coinbase: Float
+      Binance: Float
   }
 
   type TokenInfo {
@@ -99,6 +106,8 @@ const TokenResponseType = new GraphQLObjectType({
   fields: {
     date: { type: GraphQLFloat },
     CoinGecko: { type: GraphQLFloat },
+    Coinbase: { type: GraphQLFloat },
+    Binance: { type: GraphQLFloat },
   },
 });
 
@@ -177,6 +186,7 @@ const QueryType = new GraphQLObjectType({
     dexAggregatorSpecific: {
       type: new GraphQLList(TokenResponseType),
       args: {
+        id: { type: GraphQLString },
         symbol: { type: GraphQLString },
         dateRange: { type: DateRangeType },
         currency: { type: GraphQLString },
@@ -191,6 +201,15 @@ const QueryType = new GraphQLObjectType({
         currency: { type: GraphQLString },
       },
       resolve: quote,
+    },
+    searchDexAggregator: {
+      type: new GraphQLList(TokenInfoType),
+      args: {
+        query: { type: GraphQLString },
+        currency: { type: GraphQLString },
+        page: { type: GraphQLFloat },
+      },
+      resolve: searchDexAggregator,
     },
   },
 });

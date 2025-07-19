@@ -2,7 +2,6 @@
 
 import { DEX_AGGREGATOR_SPECIFIC } from "@/graphql/queries";
 import { NewCoinType } from "@/types";
-import { formatCurrency } from "@/utils";
 import { useLazyQuery } from "@apollo/client";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -11,9 +10,7 @@ import { toast } from "sonner";
 import StockChart from "../charts/StockChart";
 import CurrencySelector from "../currency-selector";
 import ProviderCardList from "../data/ProviderCardList";
-import { OtherDetailsColumns } from "../data/table/columns";
 import { TimeRangeSelector } from "../time-range-selector";
-import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
 
 dayjs.extend(advancedFormat);
 
@@ -82,14 +71,19 @@ export const CoinModal = ({
   setTimeRange?: (timeRange: string) => void;
 }) => {
   const [fetchChartData, { loading, data, error }] = useLazyQuery(
-    DEX_AGGREGATOR_SPECIFIC
+    DEX_AGGREGATOR_SPECIFIC,
+    {
+      fetchPolicy: "no-cache",
+    }
   );
   const [retried, setRetried] = useState(0);
+
   useEffect(() => {
     if (open?.info.id) {
       fetchChartData({
         variables: {
-          symbol: open?.info.id.toLowerCase(),
+          id: open?.info.id.toLowerCase(),
+          symbol: open?.info.symbol.toUpperCase(),
           dateRange: timeRangeMap[timeRange as keyof typeof timeRangeMap],
           currency,
         },
@@ -120,14 +114,6 @@ export const CoinModal = ({
     }
   }, [error, retried]);
 
-  const hasPriceIncreased = open?.results
-    .map((price) => {
-      return price.provider == "CoinMarketCap"
-        ? price.percent_change_24h
-        : price.price_change_percentage_24h;
-    })
-    .some((change) => change > 0);
-
   const timeRangeMap = {
     "24h": "twenty_four_hours",
     "7d": "seven_days",
@@ -157,61 +143,20 @@ export const CoinModal = ({
             />
             <CurrencySelector currency={currency} setCurrency={setCurrency} />
           </div>
-          <section className="flex flex-col md:flex-row gap-2">
-            <ProviderCardList open={open} currency={currency} />
+          <section className="flex flex-col md:flex-row gap-5">
+            <ProviderCardList
+              open={open}
+              currency={currency}
+              data={data?.dexAggregatorSpecific}
+            />
             <StockChart
               loading={loading}
               data={data}
               timeRange={timeRange}
               currency={currency}
-              hasPriceIncreased={hasPriceIncreased}
             />
           </section>
         </DialogDescription>
-        <Card className="p-3 border-none hover:bg-inherit hover:shadow-none max-w-[calc(100%-5rem)]">
-          {open && open?.results.length > 0 && (
-            <div className="flex flex-col ">
-              <CardHeader className="p-2 underline underline-offset-8">
-                Other details
-              </CardHeader>
-              <CardContent className="p-2">
-                <CardDescription className="flex gap-2 flex-col text-foreground">
-                  <Table className="overflow-auto">
-                    <TableHeader className="text-start">
-                      <TableRow>
-                        {OtherDetailsColumns.map((column) => (
-                          <TableHead key={column.accessorKey}>
-                            {column.header}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {open?.results?.length > 0 &&
-                        open?.results.map((res) => (
-                          <TableRow>
-                            <TableCell className="text-start">
-                              {res.provider}
-                            </TableCell>
-                            <TableCell className="text-start">
-                              {res?.total_supply
-                                ? res?.total_supply?.toLocaleString("en-US")
-                                : "-"}
-                            </TableCell>
-                            <TableCell className="text-start">
-                              {res.market_cap
-                                ? formatCurrency(res.market_cap, currency)
-                                : "-"}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </CardDescription>
-              </CardContent>
-            </div>
-          )}
-        </Card>
       </DialogContent>
     </Dialog>
   );

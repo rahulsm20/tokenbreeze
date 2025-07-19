@@ -23,6 +23,7 @@ export type NewCoinType = {
     current_price: number;
     price_change_percentage_7d: number;
     image: string;
+    price_change_percentage_24h: number;
     // price_change_1h: number;
     // price_change_7d: number;
   };
@@ -109,5 +110,12 @@ export type StockChartPropsType = {
   data: any;
   timeRange: string;
   currency: string;
-  hasPriceIncreased: boolean | undefined;
+};
+
+export type Providers = "CoinGecko" | "Binance" | "Coinbase";
+
+export type StockChartDataType = {
+  date: string;
+} & {
+  [key in Providers]: number | string;
 };

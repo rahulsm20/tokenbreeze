@@ -4,14 +4,15 @@ import { newCoinColumns } from "@/components/home/columns";
 import { DataTable } from "@/components/home/data-table";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DEX_AGGREGATOR } from "@/graphql/queries";
-import { useQuery } from "@apollo/client";
+import { DEX_AGGREGATOR, SEARCH_AGGREGATOR } from "@/graphql/queries";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,7 +20,7 @@ import {
   Info,
   RefreshCcw,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Home component that displays aggregated cryptocurrency prices.
@@ -28,13 +29,30 @@ import { useState } from "react";
  */
 const Home = () => {
   const [currency, setCurrency] = useState("usd");
+  const [query, setQuery] = useState("");
   const [isRefetching, setIsRefetching] = useState(false);
+  const [tableData, setTableData] = useState([]);
 
-  const {
-    loading: loadingData,
-    data: dexData,
-    refetch,
-  } = useQuery(DEX_AGGREGATOR, { variables: { currency } });
+  const { loading: loadingData, refetch } = useQuery(DEX_AGGREGATOR, {
+    variables: { currency },
+    onCompleted: (data) => {
+      setTableData(data.dexAggregator || []);
+    },
+  });
+
+  const [searchTokens, { loading: loadingSearch }] = useLazyQuery(
+    SEARCH_AGGREGATOR,
+    {
+      variables: { currency, page: 1, query },
+      fetchPolicy: "network-only",
+      onCompleted: (data) => {
+        setTableData(data.searchDexAggregator || []);
+      },
+      onError: (error) => {
+        console.error("Search error", error);
+      },
+    }
+  );
 
   const tooltipData = (
     <div className="text-wrap w-40 p-2">
@@ -63,6 +81,19 @@ const Home = () => {
   //       )
   //   );
 
+  useEffect(() => {
+    if (query.trim() === "") {
+      refetch();
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      searchTokens({ variables: { currency, page: 1, query } });
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [query, currency]);
+
   return (
     <Layout>
       <div className="p-10 flex flex-col gap-3">
@@ -85,7 +116,7 @@ const Home = () => {
               className="ml-auto"
               variant="outline"
               onClick={handleRefetch}
-              disabled={isRefetching || loadingData}
+              disabled={isRefetching || loadingData || loadingSearch}
             >
               <RefreshCcw
                 className={isRefetching ? "animate-spin text-primary" : ""}
@@ -94,12 +125,20 @@ const Home = () => {
             <CurrencySelector currency={currency} setCurrency={setCurrency} />
           </div>
         </h1>
-        {loadingData ? (
+        <Input
+          placeholder="Search"
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+          }}
+          className="max-w-sm"
+        />
+        {loadingData || loadingSearch ? (
           <Ellipsis className="animate-pulse" />
         ) : (
           <DataTable
             columns={() => newCoinColumns(currency)}
-            data={dexData ? dexData.dexAggregator : []}
+            data={tableData}
             paginate
             showPageData={false}
             previousIcon={<ChevronLeft />}

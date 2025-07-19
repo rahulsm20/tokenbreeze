@@ -18,11 +18,15 @@ class CoinMarketCapInstance {
       },
     });
   }
-  async getLatestListings(currency: string = "usd") {
+  async getLatestListings(
+    currency: string = "usd",
+    start: number = 1,
+    limit: number = 10
+  ) {
     try {
-      const url = `${this.base_url}/v1/cryptocurrency/listings/latest?convert=${currency}`;
+      const url = `${this.base_url}/v1/cryptocurrency/listings/latest?convert=${currency}&start=${start}&limit=${limit}`;
       const today = dayjs().format("YYYY-MM-DD");
-      const cacheKey = `cmc:listings:${today}:${currency}`;
+      const cacheKey = `cmc:listings:${today}:${currency}:${start}:${limit}`;
       const cachedData = await retrieveCachedData(cacheKey);
       if (cachedData) {
         return JSON.parse(cachedData);
@@ -51,6 +55,29 @@ class CoinMarketCapInstance {
     } catch (err) {
       console.log(err);
       return;
+    }
+  }
+  async searchListings(
+    query: string,
+    currency: string = "usd",
+    page: number = 1
+  ) {
+    try {
+      const url = `${this.base_url}/v1/cryptocurrency/search`;
+      const cacheKey = `cmc:search:${query}:${currency}:${page}`;
+      const cachedData = await retrieveCachedData(cacheKey);
+      if (cachedData) {
+        return JSON.parse(cachedData);
+      }
+      const response = await this.api.get(url, {
+        params: { query, currency, page },
+      });
+      const data = await response.data;
+      await cacheData(cacheKey, JSON.stringify(data), "5 mins");
+      return data as CMCResultType;
+    } catch (err) {
+      console.log(err);
+      return err;
     }
   }
 }

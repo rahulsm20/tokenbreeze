@@ -1,7 +1,5 @@
 import { ethers } from "ethers";
 
-//-----------------------------------------------------------
-
 const QUOTER_ABI = [
   {
     inputs: [
@@ -17,8 +15,6 @@ const QUOTER_ABI = [
     type: "function",
   },
 ];
-
-//-----------------------------------------------------------
 
 export class UniswapV3Quoter {
   private quoter: ethers.Contract;
@@ -53,8 +49,6 @@ export class UniswapV3Quoter {
     }
   }
 }
-
-//-----------------------------------------------------------
 
 // Helper function to format amount with decimals
 export function parseAmount(amount: number, decimals: number): string {
