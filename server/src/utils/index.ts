@@ -1,5 +1,7 @@
 import { DateRange } from "@/types";
+import axios from "axios";
 import BigNumber from "bignumber.js";
+import { cacheData, retrieveCachedData } from "./redis";
 
 export function fromReadableAmount(
   amount: number,
@@ -39,3 +41,23 @@ export const granularityMap = {
   [DateRange.seven_days]: 3600,
   [DateRange.thirty_days]: 21600,
 };
+
+export async function convertCurrency(
+  from: string = "USD",
+  to: string,
+  amount: number
+) {
+  if (from === to) return amount;
+  const cacheKey = `currency-conversion`;
+  const cachedData = await retrieveCachedData(cacheKey);
+  if (cachedData) {
+    return Number(JSON.parse(cachedData).rates[to]) * amount;
+  }
+  const prices = await axios.get("https://api.frankfurter.app/latest?from=USD");
+  const price = prices.data?.rates[to];
+  if (!price || !prices.data) {
+    throw new Error(`Conversion rate for ${to} not found`);
+  }
+  await cacheData(cacheKey, JSON.stringify(prices.data), "1 day");
+  return amount * price;
+}

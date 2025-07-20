@@ -4,6 +4,7 @@ import { coingeckoClient } from "@/lib/coingecko";
 import { logger } from "@/logger";
 import { DateRange, DexAggregatorSpecificType } from "@/types";
 import { PROVIDERS } from "@/utils/constants";
+import { cacheData, retrieveCachedData } from "@/utils/redis";
 
 /**
  * Fetches historical data for a specific token from CoinGecko.
@@ -23,6 +24,13 @@ export const dexAggregatorSpecific = async (
   try {
     if (!symbol) {
       throw new Error("Please provide a valid symbol");
+    }
+
+    const cacheKey = `dexAggregatorSpecific-${currency}-${dateRange}`;
+    const cachedData = await retrieveCachedData(cacheKey);
+    if (cachedData) {
+      logger.info("Returning cached data for dexAggregator");
+      return JSON.parse(cachedData);
     }
     const normalizeDate = (ts: number, dateRange: DateRange) => {
       const d = new Date(ts);
@@ -102,35 +110,13 @@ export async function dexAggregator(
   { currency = "usd", page }: { currency: string; page: number }
 ) {
   try {
-    // const cmcListings = (await cmcClient.getLatestListings(
-    //   currency,
-    //   page,
-    //   20
-    // )) as CMCResultType;
-    // const { data = [] } = cmcListings;
-
+    const cacheKey = `dexAggregator-${currency}-${page || 1}`;
+    const cachedData = await retrieveCachedData(cacheKey);
+    if (cachedData) {
+      logger.info("Returning cached data for dexAggregator");
+      return JSON.parse(cachedData);
+    }
     let result = new Map();
-
-    // const CURRENCY = currency.toUpperCase();
-
-    // for (const listing of data) {
-    //   const existing = result.get(listing.symbol) || [];
-    //   result.set(listing.symbol, {
-    //     info: { ...listing, symbol: listing.symbol.toUpperCase() },
-    //     results: [
-    //       ...(existing?.results || []),
-    //       {
-    //         provider: PROVIDERS.COIN_MARKET_CAP,
-    //         price: listing.quote[CURRENCY].price,
-    //         percent_change_7d: listing.quote[CURRENCY].percent_change_7d,
-    //         percent_change_24h: listing.quote[CURRENCY].percent_change_24h,
-    //         percent_change_1h: listing.quote[CURRENCY].percent_change_1h,
-    //         total_supply: listing.total_supply,
-    //       },
-    //     ],
-    //     providers: [PROVIDERS.COIN_MARKET_CAP],
-    //   });
-    // }
 
     const cgData = await coingeckoClient.getLatestListings(currency, page, 10);
 
@@ -219,6 +205,7 @@ export async function dexAggregator(
       }
     }
 
+    await cacheData(cacheKey, JSON.stringify(res));
     return res;
   } catch (err) {
     console.error(err);
@@ -237,6 +224,13 @@ export async function searchDexAggregator(
   }: { query: string; currency: string; page: number }
 ) {
   try {
+    const cacheKey = `dexAggregatorSearch-${query}-${currency}-${page}`;
+    const cachedData = await retrieveCachedData(cacheKey);
+    if (cachedData) {
+      logger.info("Returning cached data for dexAggregator");
+      return JSON.parse(cachedData);
+    }
+
     const cgData = await coingeckoClient.searchListings(query, currency, page);
     if (!cgData || cgData.length === 0) {
       logger.warn("No data found from CoinGecko");
@@ -312,8 +306,11 @@ export async function searchDexAggregator(
         r.providers.push(PROVIDERS.BINANCE);
       }
     }
+    const finalResult = Array.from(result.values());
 
-    return Array.from(result.values());
+    await cacheData(cacheKey, JSON.stringify(finalResult));
+
+    return finalResult;
   } catch (err) {
     console.error(err);
     return { err };
