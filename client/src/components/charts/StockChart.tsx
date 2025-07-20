@@ -117,7 +117,7 @@ const StockChart = ({
   return (
     <ResponsiveContainer
       width="100%"
-      height={500}
+      height={400}
       className="flex items-center justify-center"
     >
       {loading ? (
@@ -144,12 +144,6 @@ const StockChart = ({
             content={<CustomizedTooltip {...data} currency={currency} />}
           />
           <Legend />
-          <Line
-            dot={false}
-            type="monotone"
-            dataKey="CoinGecko"
-            stroke={COLORS.GREEN}
-          />
           <Line
             dot={false}
             type="monotone"

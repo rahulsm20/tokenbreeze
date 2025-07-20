@@ -71,10 +71,7 @@ export const CoinModal = ({
   setTimeRange?: (timeRange: string) => void;
 }) => {
   const [fetchChartData, { loading, data, error }] = useLazyQuery(
-    DEX_AGGREGATOR_SPECIFIC,
-    {
-      fetchPolicy: "no-cache",
-    }
+    DEX_AGGREGATOR_SPECIFIC
   );
   const [retried, setRetried] = useState(0);
 
@@ -93,8 +90,8 @@ export const CoinModal = ({
 
   useEffect(() => {
     if (error) {
-      toast.error("Error fetching chart data. Please try again later.", {
-        description: "This may be due to a network issue or an invalid symbol.",
+      toast.error("Rate limited. You are making too many requests", {
+        description: "Please try again later.",
       });
       if (retried == 0) {
         fetchChartData({
@@ -146,6 +143,7 @@ export const CoinModal = ({
           <section className="flex flex-col md:flex-row gap-5">
             <ProviderCardList
               open={open}
+              loading={loading}
               currency={currency}
               data={data?.dexAggregatorSpecific}
             />

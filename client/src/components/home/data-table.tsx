@@ -23,7 +23,6 @@ import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat"; // ES 2015
 import { useEffect, useState } from "react";
 import { CoinModal } from "../modal/coin-modal";
-import { Input } from "../ui/input";
 
 //-------------------------------------------------------------------
 
@@ -91,6 +90,14 @@ export function DataTable<TData, TValue>({
     }
   }, [currency, timeRange]);
 
+  const imageMap = {
+    cg: "https://upload.wikimedia.org/wikipedia/commons/b/b0/CoinGecko_logo.png",
+    coinbase:
+      "https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.png",
+    binance:
+      "https://public.bnbstatic.com/20190405/eb2349c3-b2f8-4a93-a286-8f86a62ea9d8.png",
+  };
+
   return (
     <div className="text-start">
       <div className="text-xs">
@@ -101,14 +108,18 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className="text-start">
-                      <div className="flex items-center py-4 justify-between gap-2">
+                      <div
+                        className={`flex items-center py-4 ${
+                          header.id == "info.name" ? "justify-between" : ""
+                        } gap-2`}
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
                               header.getContext()
                             )}
-                        {header.id == "info.name" && (
+                        {/* {header.id == "info.name" && (
                           <Input
                             placeholder="🔍"
                             value={
@@ -122,6 +133,13 @@ export function DataTable<TData, TValue>({
                                 ?.setFilterValue(event.target.value);
                             }}
                             className="w-32"
+                          />
+                        )} */}
+                        {["cg", "coinbase", "binance"].includes(header.id) && (
+                          <img
+                            src={imageMap?.[header.id as keyof typeof imageMap]}
+                            alt={`${header.id} logo`}
+                            className="h-4 w-4"
                           />
                         )}
                       </div>

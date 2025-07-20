@@ -56,14 +56,14 @@ const Home = () => {
 
   const tooltipData = (
     <div className="text-wrap w-40 p-2">
-      The prices are aggregated from CoinGecko and CoinMarketCap.
+      The prices are aggregated from CoinGecko, Coinbase and Binance.
     </div>
   );
 
   const handleRefetch = async () => {
     try {
       setIsRefetching(true);
-      await refetch();
+      return await refetch();
     } finally {
       setIsRefetching(false);
     }
@@ -83,7 +83,12 @@ const Home = () => {
 
   useEffect(() => {
     if (query.trim() === "") {
-      refetch();
+      if (!loadingData) {
+        handleRefetch().then((data) => {
+          setTableData(data.data.dexAggregator || []);
+          return;
+        });
+      }
       return;
     }
 
@@ -133,7 +138,7 @@ const Home = () => {
           }}
           className="max-w-sm"
         />
-        {loadingData || loadingSearch ? (
+        {isRefetching || loadingData || loadingSearch ? (
           <Ellipsis className="animate-pulse" />
         ) : (
           <DataTable

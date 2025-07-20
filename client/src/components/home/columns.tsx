@@ -88,7 +88,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
     },
     {
       accessorKey: "preview",
-      header: "Preview Chart",
+      header: "Preview Chart (7d)",
       cell: (info) => {
         const data = info.cell.row.original.results.find(
           ({ provider }) => provider === PROVIDERS.COINGECKO
@@ -133,6 +133,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
     // },
     {
       accessorKey: "cg",
+      id: "cg",
       header: "CoinGecko",
       cell: (info) => (
         <div className="text-xs sm:text-base">
@@ -187,6 +188,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
     // },
     {
       accessorKey: "Coinbase",
+      id: "coinbase",
       header: "Coinbase",
       cell: (info) => (
         <div className="text-xs sm:text-base">
@@ -204,6 +206,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       ),
     },
     {
+      id: "binance",
       accessorKey: "Binance",
       header: "Binance",
       cell: (info) => (

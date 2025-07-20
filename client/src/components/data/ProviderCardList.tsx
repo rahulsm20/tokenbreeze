@@ -10,12 +10,14 @@ const ProviderCardList = ({
   open,
   currency,
   data,
+  loading,
 }: {
   open: NewCoinType | null;
   currency: string;
   data: { [key: string]: number }[] | undefined;
+  loading: boolean;
 }) => {
-  if (!data) {
+  if (loading || !open?.results || !data) {
     return (
       <div className="flex flex-col gap-5">
         <Skeleton className="h-[125px] w-[250px] md:w-52 rounded-xl" />
@@ -27,17 +29,16 @@ const ProviderCardList = ({
   return (
     <div className="flex flex-col gap-5">
       {open?.results.map(({ provider, price_change_percentage_24h, price }) => {
-        const initPrice =
-          data?.find((item: { [key: string]: number }) => item?.[provider])?.[
-            provider
-          ] || 0;
-        const finalPrice = data?.[data.length - 1]?.[provider] || 1;
-        const priceChange = finalPrice - initPrice;
+        const initPrice = data?.find(
+          (item: { [key: string]: number }) => item?.[provider]
+        )?.[provider];
+        const finalPrice = data?.[data.length - 1]?.[provider] || 0;
+        const priceChange = finalPrice - (initPrice || 0);
 
         const percentageChange = Number(
           (provider == "CoinGecko"
             ? price_change_percentage_24h
-            : (priceChange / initPrice) * 100
+            : (priceChange / (initPrice || 1)) * 100
           ).toFixed(4)
         );
 
@@ -48,17 +49,19 @@ const ProviderCardList = ({
               <CardContent className="p-2">
                 <CardDescription className="flex gap-2 justify-between">
                   <span className="m-0">{formatCurrency(price, currency)}</span>
-                  <div>
-                    {percentageChange > 0 ? (
-                      <Badge className="text-white bg-green-600 hover:bg-green-500">
-                        +{percentageChange}%
-                      </Badge>
-                    ) : (
-                      <Badge className="text-white bg-red-600 hover:bg-red-500">
-                        {percentageChange}%
-                      </Badge>
-                    )}
-                  </div>
+                  {(initPrice || price_change_percentage_24h) && (
+                    <div>
+                      {percentageChange > 0 ? (
+                        <Badge className="text-white bg-green-600 hover:bg-green-500">
+                          +{percentageChange}%
+                        </Badge>
+                      ) : (
+                        <Badge className="text-white bg-red-600 hover:bg-red-500">
+                          {percentageChange}%
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                 </CardDescription>
               </CardContent>
             </div>
