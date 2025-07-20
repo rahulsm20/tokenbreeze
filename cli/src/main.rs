@@ -1,8 +1,7 @@
 mod coingecko;
 use clap::command;
-use clap::Parser; // Import the Parser derive macro
+use clap::Parser;
 use clap::Subcommand;
-
 
 #[derive(Parser)]
 #[command(name = "tokenbreeze")]
