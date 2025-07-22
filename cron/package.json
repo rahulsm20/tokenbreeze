@@ -1,0 +1,37 @@
+{
+  "name": "tradewise-cron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "bun --watch src/server.ts",
+    "build": "bun build src/server.ts --outdir dist/src --target=node",
+    "start": "bun dist/src/server.js",
+    "migrate": "npx prisma migrate dev",
+    "deploy": "npx prisma migrate deploy && npx prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.3",
+    "@prisma/adapter-neon": "^5.15.0",
+    "@prisma/client": "^5.15.0",
+    "bun-types": "^1.2.18",
+    "cron": "^4.3.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "graphql-request": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/bun": "^1.2.18",
+    "@types/cron": "^2.0.1",
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^4.17.21",
+    "@types/node": "^24.0.10",
+    "@types/ws": "^8.5.10",
+    "prisma": "^5.15.0",
+    "typescript": "^5.4.5"
+  }
+}

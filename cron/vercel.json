@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "cron": [
+    {
+      "path": "/api/aggregator",
+      "schedule": "0 */6 * * *",
+      "timezone": "UTC"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
