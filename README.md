@@ -2,15 +2,15 @@
 
 <p align="start"><b>A fast, full-stack crypto price dashboard with cross-provider comparison.</b></p>
 
-## 🧩 Features
+## Features
 
-- 🔄 Real-time token prices from CoinGecko + CoinMarketCap
-- 📊 Click-to-view modal with price charts and historical data
-- ⚡ Redis caching to reduce provider API load
-- 💡 Full-stack GraphQL API powering the frontend
-- 🚀 Dockerized for easy deployment
+- Real-time token prices from CoinGecko + CoinMarketCap
+- Click-to-view modal with price charts and historical data
+- Redis caching to reduce provider API load
+- Full-stack GraphQL API powering the frontend
+- Dockerized for easy deployment
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -30,13 +30,13 @@
 - Mocha + Chai
 - k6 (via Grafana Cloud)
 
-## 🧱 Architecture
+## Architecture
 
-![TokenBreeze Architecture](./client/public/tokenbreeze_arch.png)
+![TokenBreeze Architecture](./client/public/tokenbreeze_arch2.png)
 
 > TokenBreeze is designed for performance and scalability. Market data is cached on the server to minimize redundant API calls and improve response time. Charting is rendered on-demand using client-side modals.
 
-## 🚀 Running Locally
+## Running Locally
 
 1. Clone the repo
 2. Set up `.env` files in both `client/` and `server/` directories (see `.env.example`)
