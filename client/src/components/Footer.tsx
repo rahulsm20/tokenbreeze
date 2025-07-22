@@ -24,7 +24,7 @@ const Footer = () => {
           <Logo /> TokenBreeze
         </p>
         <span className="text-sm text-zinc-500">
-          Just another token price aggregator.
+          Not just another token price aggregator.
         </span>
         <div className="flex flex-col gap-3">
           <ul className="flex gap-2 list-disc ">

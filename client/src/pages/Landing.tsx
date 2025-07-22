@@ -10,6 +10,7 @@ import {
 import {
   ArrowRight,
   Book,
+  Coins,
   Computer,
   RefreshCcw,
   Scroll,
@@ -45,12 +46,12 @@ const Landing = () => {
       description: "Navigate easily with our intuitive design.",
       icon: <Computer />,
     },
-    // {
-    //   id: 5,
-    //   name: "Send and receive tokens",
-    //   description: "Easily send or receive tokens with our platform.",
-    //   icon: <Coins />,
-    // },
+    {
+      id: 5,
+      name: "Send and receive tokens",
+      description: "Easily send or receive tokens with our platform.",
+      icon: <Coins />,
+    },
     {
       id: 6,
       name: "No signup required",
@@ -87,11 +88,13 @@ const Landing = () => {
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center p-10 gap-5">
-        <h1 className="text-4xl flex gap-1 items-center">
-          TokenBreeze
-          <Logo />
-        </h1>
-        <p className="text-lg">Just another token price aggregator.</p>
+        <div className="flex flex-col items-start justify-center gap-2">
+          <h1 className="text-5xl flex gap-2 items-center">
+            TokenBreeze
+            <Logo className="w-10 h-10" />
+          </h1>
+          <p className="text-lg">Not just another token price aggregator.</p>
+        </div>
         <Link to="/prices" className="flex items-center gap-1">
           <Button className="text-white bg-green-600 hover:bg-green-700 transition-colors duration-300">
             Start Exploring <ArrowRight className="inline h-4 w-4" />

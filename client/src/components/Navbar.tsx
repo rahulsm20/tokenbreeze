@@ -63,7 +63,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex flex-wrap items-center p-2 gap-3 justify-between sticky top-0 z-10 backdrop-blur-3xl border-b w-full">
+    <div className="flex flex-wrap items-center p-4 gap-3 justify-center sticky top-0 z-10 backdrop-blur-3xl w-full border-b">
       <ul className="flex gap-5 items-center flex-wrap text-xs">
         <li>
           <Link to="/" className="gap-1 flex items-center">
@@ -79,8 +79,8 @@ const Navbar = () => {
             icon={item.icon}
           />
         ))}
+        <ModeToggle />
       </ul>
-      <ModeToggle />
     </div>
   );
 };

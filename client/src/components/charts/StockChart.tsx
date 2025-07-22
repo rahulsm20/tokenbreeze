@@ -4,7 +4,7 @@ import { StockChartPropsType } from "@/types";
 import { formatCurrency } from "@/utils";
 import { COLORS } from "@/utils/constants";
 import dayjs from "dayjs";
-import { Loader } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import {
   CartesianGrid,
   Legend,
@@ -121,7 +121,7 @@ const StockChart = ({
       className="flex items-center justify-center"
     >
       {loading ? (
-        <Loader className="animate-spin h-4 w-4" />
+        <Ellipsis className="animate-pulse h-4 w-4" />
       ) : data?.dexAggregatorSpecific.length > 0 ? (
         <LineChart
           width={400}
