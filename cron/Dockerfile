@@ -34,5 +34,5 @@ COPY --from=prerelease /usr/src/app/bunfig.toml ./bunfig.toml
 
 # run the app
 USER bun
-EXPOSE 4000/tcp
+EXPOSE 8000/tcp
 ENTRYPOINT [ "bun", "start" ]
