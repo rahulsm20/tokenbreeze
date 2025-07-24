@@ -10,22 +10,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: production
-    strategy:
-      matrix:
-        node-version: [21.x]
+
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-          cache-dependency-path: server/package-lock.json
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
 
       - name: Install Dependencies
         run: |
           cd server
-          npm install bun
           bun install
 
       - name: Run tests
