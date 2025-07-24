@@ -3,7 +3,7 @@ name: Publish Cron Event
 
 on:
   schedule:
-    - cron: "* */1 * * *" # every 1 hour
+    - cron: "0 * * * *" # every 1 hour
 
 jobs:
   publish:
