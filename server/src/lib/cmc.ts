@@ -33,7 +33,7 @@ class CoinMarketCapInstance {
       }
       const response = await this.api.get(url);
       const data = await response.data;
-      await cacheData(cacheKey, JSON.stringify(data), "5 mins");
+      await cacheData(cacheKey, JSON.stringify(data));
       return data as CMCResultType;
     } catch (err) {
       console.log(err);
@@ -73,7 +73,7 @@ class CoinMarketCapInstance {
         params: { query, currency, page },
       });
       const data = await response.data;
-      await cacheData(cacheKey, JSON.stringify(data), "5 mins");
+      await cacheData(cacheKey, JSON.stringify(data));
       return data as CMCResultType;
     } catch (err) {
       console.log(err);

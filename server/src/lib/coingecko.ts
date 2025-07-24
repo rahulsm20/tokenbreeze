@@ -42,7 +42,7 @@ class CoingeckoInstance {
       }
       const response = await this.api.get(url);
       const data = await response.data;
-      await cacheData(cacheKey, JSON.stringify(data), "5 mins");
+      await cacheData(cacheKey, JSON.stringify(data));
       return data as CMCResultType;
     } catch (err) {
       console.log(err);
@@ -134,7 +134,6 @@ class CoingeckoInstance {
   ) {
     const url = `${this.base_url}/v3/search`;
     const cacheKey = `cg:search:${query}:${currency}:${page}`;
-    console.log({ cacheKey });
     const cachedData = await retrieveCachedData(cacheKey);
     if (cachedData) {
       return JSON.parse(cachedData);
@@ -143,7 +142,7 @@ class CoingeckoInstance {
       params: { query, currency, page },
     });
     const data = await response.data;
-    await cacheData(cacheKey, JSON.stringify(data), "5 mins");
+    await cacheData(cacheKey, JSON.stringify(data));
     return data;
   }
 }

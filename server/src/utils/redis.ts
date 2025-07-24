@@ -41,17 +41,18 @@ export const disconnectRedis = async () => {
 export const cacheData = async (
   key: string,
   data: string,
-  lifetime?: "5 mins" | "1 day" | "1 minute"
+  lifetime?: "5 mins" | "1 day" | "1 minute" | "1 hour"
 ) => {
   await connectRedis();
   const cached = await redisClient.set(key, data, {
-    EX: !lifetime
-      ? 60 * 10 // Default to 10 minutes
-      : lifetime == "5 mins"
-      ? 60 * 5
-      : lifetime == "1 minute"
-      ? 60 * 1
-      : 60 * 60 * 24,
+    EX:
+      !lifetime || lifetime == "1 hour"
+        ? 60 * 60
+        : lifetime == "5 mins"
+        ? 60 * 5
+        : lifetime == "1 minute"
+        ? 60 * 1
+        : 60 * 60 * 24,
   });
   return cached;
 };

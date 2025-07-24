@@ -26,7 +26,7 @@ export const oneInchAggregator = async (address: string, r: any) => {
   );
 
   if (quote && quote.toAmount) {
-    await cacheData(cacheKey, JSON.stringify(quote), "5 mins");
+    await cacheData(cacheKey, JSON.stringify(quote));
     const price = ethers.formatUnits(quote.toAmount, 6);
     r.providers.push(PROVIDERS.ONEINCH);
     r.results.push({
