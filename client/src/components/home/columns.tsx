@@ -66,7 +66,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       id: "info.name",
       header: "Token",
       cell: (info) => (
-        <div className="grid grid-cols-3 gap-3 items-center text-xs sm:text-base p-2 md:p-0 w-52">
+        <div className="grid grid-cols-3 gap-3 items-center sm:text-base p-2 md:p-0 w-20">
           <div className="flex items-center gap-2 col-span-2">
             {info.cell.row.original.info.image && (
               <img
@@ -74,13 +74,13 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
                 className="h-4 w-4"
               />
             )}
-            <span className="p-2 text-xs sm:text-sm hidden md:flex">
+            <span className="p-2 hidden md:flex">
               {info.cell.row.original.info.name.length > 8
                 ? `${info.cell.row.original.info.name.slice(0, 8)}...`
                 : info.cell.row.original.info.name}
             </span>
           </div>
-          <span className="text-foreground/80 text-xs sm:text-base col-span-1">
+          <span className="text-foreground/80 text-xs sm:text-base col-span-1 flex md:hidden">
             {info.cell.row.original.info.symbol}
           </span>
         </div>
@@ -136,7 +136,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       id: "cg",
       header: "CoinGecko",
       cell: (info) => (
-        <div className="text-xs sm:text-base">
+        <div>
           {info.cell.row.original.results.find(
             (r) => r.provider === PROVIDERS.COINGECKO
           )?.price
@@ -191,7 +191,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       id: "coinbase",
       header: "Coinbase",
       cell: (info) => (
-        <div className="text-xs sm:text-base">
+        <div>
           {info.cell.row.original.results.find(
             (r) => r.provider === PROVIDERS.COINBASE
           )?.price
@@ -210,7 +210,7 @@ export const newCoinColumns = (currency: string): ColumnDef<NewCoinType>[] => {
       accessorKey: "Binance",
       header: "Binance",
       cell: (info) => (
-        <div className="text-xs sm:text-base">
+        <div>
           {info.cell.row.original.results.find(
             (r) => r.provider === PROVIDERS.BINANCE
           )?.price

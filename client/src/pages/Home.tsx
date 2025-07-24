@@ -136,7 +136,7 @@ const Home = () => {
           onChange={(event) => {
             setQuery(event.target.value);
           }}
-          className="max-w-sm"
+          className="max-w-sm h-8"
         />
         {isRefetching || loadingData || loadingSearch ? (
           <Ellipsis className="animate-pulse" />
@@ -144,7 +144,6 @@ const Home = () => {
           <DataTable
             columns={() => newCoinColumns(currency)}
             data={tableData}
-            paginate
             showPageData={false}
             previousIcon={<ChevronLeft />}
             nextIcon={<ChevronRight />}

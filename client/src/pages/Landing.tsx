@@ -48,8 +48,8 @@ const Landing = () => {
     },
     {
       id: 5,
-      name: "Send and receive tokens",
-      description: "Easily send or receive tokens with our platform.",
+      name: "Send tokens",
+      description: "Easily send tokens on our platform.",
       icon: <Coins />,
     },
     {

@@ -102,23 +102,29 @@ export function DataTable<TData, TValue>({
     <div className="text-start">
       <div className="text-xs">
         <Table className="overflow-x-scroll text-xs">
-          <TableHeader className="max-w-32">
+          <TableHeader className="max-w-32 text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className="text-start">
                       <div
-                        className={`flex items-center py-4 ${
+                        className={`flex text-xs items-center text-foreground py-4 ${
                           header.id == "info.name" ? "justify-between" : ""
                         } gap-2`}
                       >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                        <span
+                          className={
+                            ["cg", "coinbase", "binance"].includes(header.id)
+                              ? "hidden md:flex"
+                              : "text-xs"
+                          }
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </span>
                         {/* {header.id == "info.name" && (
                           <Input
                             placeholder="🔍"
@@ -160,14 +166,19 @@ export function DataTable<TData, TValue>({
                   onClick={() => setModal(row.original as NewCoinType)}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-start">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className="text-start [&>*]:text-xs"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
