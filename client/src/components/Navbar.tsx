@@ -1,4 +1,4 @@
-import { ArrowUpRight, Home, LineChart } from "lucide-react";
+import { ArrowUpDown, ArrowUpRight, LineChart } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { ModeToggle } from "./dark-mode-toggle";
 import { Logo } from "./icons";
@@ -16,16 +16,16 @@ type NavItemProps = {
 const Navbar = () => {
   const navItems = [
     {
-      name: "Home",
-      href: "/",
-      external: false,
-      icon: <Home className="h-4 w-4" />,
-    },
-    {
       name: "Prices",
       href: "/prices",
       external: false,
       icon: <LineChart className="h-4 w-4" />,
+    },
+    {
+      name: "Payments",
+      href: "/payments",
+      external: false,
+      icon: <ArrowUpDown className="h-4 w-4" />,
     },
     {
       name: "About",
@@ -39,31 +39,28 @@ const Navbar = () => {
       external: true,
       icon: <ArrowUpRight className="h-3 w-3" />,
     },
-    // {
-    //   name: "Payments",
-    //   href: "/payments",
-    //   external: false,
-    //   icon: <Coins className="h-4 w-4" />,
-    // },
   ];
 
   const NavItem = ({ name, href, external, icon }: NavItemProps) => {
     return (
-      <li title={name}>
+      <li title={name} className="font-medium">
         <NavLink
           to={href}
           target={external ? "_blank" : undefined}
-          className={`flex ${!external && "items-center"} hover:underline`}
+          className={`flex ${
+            !external ? "items-center gap-2" : ""
+          } hover:underline`}
         >
           {<span>{name}</span>}
           {external && icon}
+          {!external && <span className="md:flex hidden">{icon}</span>}
         </NavLink>
       </li>
     );
   };
 
   return (
-    <div className="flex flex-wrap items-center p-4 gap-3 justify-center sticky top-0 z-10 backdrop-blur-3xl w-full border-b">
+    <div className="flex flex-wrap items-center p-2 gap-3 justify-center sticky top-0 z-10 backdrop-blur-3xl w-full border-b">
       <ul className="flex gap-5 items-center flex-wrap text-xs">
         <li>
           <Link to="/" className="gap-1 flex items-center">
