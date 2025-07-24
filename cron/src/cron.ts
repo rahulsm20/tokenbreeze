@@ -42,16 +42,16 @@ export async function startIntervalCron(req: Request, res: Response) {
     const message = req.body?.message;
 
     if (!message?.data) {
-      return res.status(400).send("No data");
+      return res.status(400).json("No data");
     }
     const decodedBuffer = Buffer.from(message.data, "base64").toString();
     const decoded = JSON.parse(decodedBuffer);
 
     if (
-      decoded.job == "refresh" &&
-      decoded.encryptionKey == config.ENCRYPTION_KEY
+      decoded.job != "refresh" ||
+      decoded.encryptionKey != config.ENCRYPTION_KEY
     ) {
-      return res.status(400).send("Invalid message data");
+      return res.status(400).json("Invalid message data");
     }
 
     res.status(200).json("Cron job started");
