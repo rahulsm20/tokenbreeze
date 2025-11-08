@@ -30,6 +30,13 @@
 - Mocha + Chai
 - k6 (via Grafana Cloud)
 
+### CLI
+
+- Rust
+- Clap
+- Reqwest
+- Serde
+
 ## Architecture
 
 ![TokenBreeze Architecture](./client/public/tokenbreeze_arch2.png)
