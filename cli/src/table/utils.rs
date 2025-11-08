@@ -16,27 +16,53 @@ pub struct DexRow {
     // sparkline: String,
 }
 
+#[derive(Tabled)]
+pub struct DexRowSpecific {
+    coin: String,
+    avg_coinbase: String,
+    avg_binance: String,
+}
+
+enum DexResult {
+    Rows(Vec<DexRow>),
+    SpecificRows(Vec<DexRowSpecific>),
+}
+
 //--------------------------------------------------------------
-pub fn collect_results(
-    aggregators: &Vec<Value>,
-    key: &str,
-    coin: Option<&str>,
-) -> Option<Vec<DexRow>> {
-    let mut rows = Vec::new();
+
+// fn downsample(values: &[f64], width: usize) -> Vec<f64> {
+//     if values.len() <= width {
+//         return values.to_vec();
+//     }
+
+//     let step = values.len() as f64 / width as f64;
+//     (0..width)
+//         .map(|i| values[(i as f64 * step) as usize])
+//         .collect()
+// }
+
+/// Converts numbers to a sparkline string with optional width
+// pub fn sparkline_for_table(values: &[f64], width: usize) -> String {
+//     let sampled = downsample(values, width);
+//     let theme = select_sparkline(SparkThemeName::Colour);
+//     let (min, max) = min_max_for_data(&sampled, None, None);
+
+//     sampled
+//         .iter()
+//         .map(|v| theme.spark(min, max, *v).as_str())
+//         .collect()
+// }
+fn collect_results(aggregators: &Vec<Value>, key: &str, coin: Option<&str>) -> Option<DexResult> {
+    let mut rows: Vec<DexRow> = Vec::new();
+    let mut specific_rows = Vec::new();
     if key == "dexAggregatorSpecific" {
-        let mut avg_coingecko_price = 0.0;
         let mut avg_coinbase_price = 0.0;
         let mut avg_binance_price = 0.0;
 
         let coin = coin;
         for agg in aggregators {
             let binance = agg.get("Binance").unwrap_or(&Value::Null);
-            let coingecko = agg.get("CoinGecko").unwrap_or(&Value::Null);
             let coinbase = agg.get("Coinbase").unwrap_or(&Value::Null);
-            if !coingecko.is_null() {
-                avg_coingecko_price =
-                    (avg_coingecko_price + coingecko.as_f64().unwrap_or(0.0)) / 2.0;
-            }
             if !coinbase.is_null() {
                 avg_coinbase_price = (avg_coinbase_price + coinbase.as_f64().unwrap_or(0.0)) / 2.0;
             }
@@ -44,12 +70,10 @@ pub fn collect_results(
                 avg_binance_price = (avg_binance_price + binance.as_f64().unwrap_or(0.0)) / 2.0;
             }
         }
-        rows.push(DexRow {
+        specific_rows.push(DexRowSpecific {
             coin: coin.unwrap_or("-").to_string(),
-            coingecko: avg_coingecko_price.to_string(),
-            coinbase: avg_coinbase_price.to_string(),
-            binance: avg_binance_price.to_string(),
-            // sparkline: sparkline_str,
+            avg_coinbase: avg_coinbase_price.to_string(),
+            avg_binance: avg_binance_price.to_string(),
         });
     } else {
         for agg in aggregators {
@@ -72,16 +96,16 @@ pub fn collect_results(
                     match provider {
                         "CoinGecko" => {
                             coingecko_price = price;
-                            // if let Some(arr) = r.get("sparkline_in_7d").and_then(|v| v.as_array()) {
-                            //     let points: Vec<f64> =
-                            //         arr.iter().filter_map(|v| v.as_f64()).collect();
-                            //     let theme =
-                            //         sparkline::select_sparkline(sparkline::SparkThemeName::Colour);
-                            //     let (min, max) = sparkline::min_max_for_data(&points, None, None);
-                            //     sparkline_str = points
-                            //         .iter()
-                            //         .map(|v| theme.spark(min, max, *v).as_str())
-                            //         .collect();
+                            // if let Some(_arr) = r.get("sparkline_in_7d").and_then(|v| v.as_array())
+                            // {
+                            //     sparkline_str = agg["results"][0]["sparkline_in_7d"]
+                            //         .as_array()
+                            //         .map(|arr| {
+                            //             let nums: Vec<f64> =
+                            //                 arr.iter().filter_map(|v| v.as_f64()).collect();
+                            //             sparkline_for_table(&nums, 30) // 20 characters wide
+                            //         })
+                            //         .unwrap_or("-".to_string());
                             // }
                         }
                         "Coinbase" => coinbase_price = price,
@@ -100,8 +124,11 @@ pub fn collect_results(
             });
         }
     }
-
-    Some(rows)
+    if key == "dexAggregatorSpecific" {
+        Some(DexResult::SpecificRows(specific_rows))
+    } else {
+        Some(DexResult::Rows(rows))
+    }
 }
 
 pub fn display_json_table(json: &Value, key: Option<&str>, coin: Option<&str>) {
@@ -116,11 +143,26 @@ pub fn display_json_table(json: &Value, key: Option<&str>, coin: Option<&str>) {
         .and_then(|v| v.as_array())
     {
         let rows = collect_results(aggregators, key.unwrap_or("dexAggregator"), coin);
-        if let Some(r) = rows {
-            let mut table = Table::new(r);
-            table.with(Style::modern());
-            table.modify(Columns::first(), Alignment::left());
-            println!("{}", table);
+        if let Some(res) = rows {
+            match res {
+                DexResult::Rows(rows_vec) => {
+                    let mut table = Table::new(rows_vec);
+                    table.with(Style::modern());
+                    table.modify(Columns::first(), Alignment::left())
+                    // .with(
+                    //     Modify::new(Columns::last()).with(tabled::settings::Width::truncate(100)),
+                    // )
+                    ;
+
+                    println!("{}", table);
+                }
+                DexResult::SpecificRows(spec_vec) => {
+                    let mut table = Table::new(spec_vec);
+                    table.with(Style::modern());
+                    table.modify(Columns::first(), Alignment::left());
+                    println!("{}", table);
+                }
+            }
         }
     } else {
         println!("{}", serde_json::to_string_pretty(&json).unwrap());
