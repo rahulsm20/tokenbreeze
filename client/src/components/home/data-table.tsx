@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
   const imageMap = {
     cg: "https://upload.wikimedia.org/wikipedia/commons/b/b0/CoinGecko_logo.png",
     coinbase:
-      "https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.png",
+      "https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-4.svg",
     binance:
       "https://public.bnbstatic.com/20190405/eb2349c3-b2f8-4a93-a286-8f86a62ea9d8.png",
   };
@@ -145,7 +145,8 @@ export function DataTable<TData, TValue>({
                           <img
                             src={imageMap?.[header.id as keyof typeof imageMap]}
                             alt={`${header.id} logo`}
-                            className="h-4 w-4"
+                            title={`${header.id} logo`}
+                            className="h-5 w-5"
                           />
                         )}
                       </div>

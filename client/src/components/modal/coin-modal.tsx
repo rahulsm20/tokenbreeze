@@ -123,38 +123,38 @@ export const CoinModal = ({
       open={open ? true : false}
       onOpenChange={() => setOpen(open ? null : open)}
     >
-      <DialogContent className="lg:mx-0 max-w-[calc(100%-5rem)] h-3/4 lg:max-w-screen-lg">
-        <DialogHeader className="flex flex-col gap-1">
+      <DialogContent className="lg:mx-0 max-w-[calc(100%-5rem)] h-2/3 lg:max-w-screen-lg">
+        <DialogHeader className="flex flex-col gap-4">
           <DialogTitle className="flex items-center gap-2">
             {open?.info.image && (
               <img className="h-4 w-4" src={open?.info.image} />
             )}
             {open?.info.name} ({open?.info.symbol})
           </DialogTitle>
+          <DialogDescription className="flex flex-col gap-2">
+            <div className="flex gap-2 w-full justify-between">
+              <TimeRangeSelector
+                timeRange={timeRange}
+                setTimeRange={setTimeRange}
+              />
+              <CurrencySelector currency={currency} setCurrency={setCurrency} />
+            </div>
+            <section className="flex flex-col md:flex-row gap-5">
+              <ProviderCardList
+                open={open}
+                loading={loading}
+                currency={currency}
+                data={data?.dexAggregatorSpecific}
+              />
+              <StockChart
+                loading={loading}
+                data={data}
+                timeRange={timeRange}
+                currency={currency}
+              />
+            </section>
+          </DialogDescription>
         </DialogHeader>
-        <DialogDescription className="flex flex-col gap-2">
-          <div className="flex gap-2 w-full justify-between">
-            <TimeRangeSelector
-              timeRange={timeRange}
-              setTimeRange={setTimeRange}
-            />
-            <CurrencySelector currency={currency} setCurrency={setCurrency} />
-          </div>
-          <section className="flex flex-col md:flex-row gap-5">
-            <ProviderCardList
-              open={open}
-              loading={loading}
-              currency={currency}
-              data={data?.dexAggregatorSpecific}
-            />
-            <StockChart
-              loading={loading}
-              data={data}
-              timeRange={timeRange}
-              currency={currency}
-            />
-          </section>
-        </DialogDescription>
       </DialogContent>
     </Dialog>
   );

@@ -32,7 +32,7 @@ const Home = () => {
   const [query, setQuery] = useState("");
   const [isRefetching, setIsRefetching] = useState(false);
   const [tableData, setTableData] = useState([]);
-
+  console.log({ tableData });
   const { loading: loadingData, refetch } = useQuery(DEX_AGGREGATOR, {
     variables: { currency },
     onCompleted: (data) => {
@@ -44,7 +44,7 @@ const Home = () => {
     SEARCH_AGGREGATOR,
     {
       variables: { currency, page: 1, query },
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-first",
       onCompleted: (data) => {
         setTableData(data.searchDexAggregator || []);
       },
